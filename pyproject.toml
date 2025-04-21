@@ -1,0 +1,14 @@
+[project]
+name = "pypelined"
+version = "0.1.0"
+description = "pypelined"
+readme = "README.md"
+authors = [
+    { name = "Shinya Sasaki", email = "shinya.sasaki@kek.jp" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
