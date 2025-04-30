@@ -10,17 +10,23 @@ _logger = logging.getLogger(__name__)
 
 @node.register("for_list")
 class ForList(ProcessNode):
-    def __init__(self, _bb, name, lists: list, expression: str, filter=None):
+    def __init__(
+        self, _bb, name, lists: list, expression: str, filter=None, out_bb=False
+    ):
         super().__init__(_bb, name)
         self.variable = Variable(expression, _bb)
         self.lists = Variable(lists, _bb)
         self.filter = Variable(filter, _bb) if filter else None
+        self.out_bb = out_bb
 
     async def process(self, flowdata: FlowData) -> FlowData:
         lists = self.lists.fetch(flowdata)
         var_dict = {"fd": FlowData}
         items = self._for_loop(lists[0], 0, lists[1:], self.variable, var_dict)
-        flowdata[self.name] = items
+        if self.out_bb:
+            self.bb[self.name] = items
+        else:
+            flowdata[self.name] = items
         return flowdata
 
     @singledispatchmethod
@@ -61,18 +67,24 @@ class ForList(ProcessNode):
 
 @node.register("for_dict")
 class ForDict(ProcessNode):
-    def __init__(self, _bb, name, lists: list, key: str, val: str, filter=None):
+    def __init__(
+        self, _bb, name, lists: list, key: str, val: str, filter=None, out_bb=False
+    ):
         super().__init__(_bb, name)
         self.key = Variable(key, _bb)
         self.val = Variable(val, _bb)
         self.lists = Variable(lists, _bb)
         self.filter = Variable(filter, _bb) if filter else None
+        self.out_bb = out_bb
 
     async def process(self, flowdata: FlowData) -> FlowData:
         lists = self.lists.fetch(flowdata)
         var_dict = {"fd": FlowData}
         items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
-        flowdata[self.name] = items
+        if self.out_bb:
+            self.bb[self.name] = items
+        else:
+            flowdata[self.name] = items
         return flowdata
 
     @singledispatchmethod
