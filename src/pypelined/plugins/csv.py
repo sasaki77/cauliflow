@@ -4,7 +4,7 @@ from enum import StrEnum
 from pathlib import Path
 
 from pypelined.blackboard import bb
-from pypelined.flowdata import FlowData
+from pypelined.flowdata import fd
 from pypelined.node import ProcessNode, node
 
 _logger = logging.getLogger(__name__)
@@ -31,15 +31,16 @@ class InputCSVNode(ProcessNode):
         self.out_bb = out_bb
         self.format = format
 
-    async def process(self, flowdata: FlowData):
+    async def process(self):
         csvdata = self.get_csvdata()
         _bb = bb.get()
         if self.out_bb:
             _bb[self.name] = csvdata
         else:
+            flowdata = fd.get()
             flowdata[self.name] = csvdata
 
-        return flowdata
+        return
 
     def get_csvdata(self):
         with self.path.open(newline="") as csvfile:

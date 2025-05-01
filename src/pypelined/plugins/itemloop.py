@@ -2,7 +2,7 @@ import logging
 from functools import singledispatchmethod
 
 from pypelined.blackboard import bb
-from pypelined.flowdata import FlowData
+from pypelined.flowdata import fd
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
 
@@ -18,16 +18,17 @@ class ForList(ProcessNode):
         self.filter = Variable(filter) if filter else None
         self.out_bb = out_bb
 
-    async def process(self, flowdata: FlowData) -> FlowData:
-        lists = self.lists.fetch(flowdata)
-        var_dict = {"fd": FlowData}
+    async def process(self):
+        lists = self.lists.fetch()
+        var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.variable, var_dict)
         if self.out_bb:
             _bb = bb.get()
             _bb[self.name] = items
         else:
+            flowdata = fd.get()
             flowdata[self.name] = items
-        return flowdata
+        return
 
     @singledispatchmethod
     def _for_loop(self, item, i: int, lists: list, variable: Variable, var_dict: dict):
@@ -42,9 +43,9 @@ class ForList(ProcessNode):
                 ret = self._for_loop(lists[0], i + 1, lists[1:], variable, var_dict)
                 items.extend(ret)
             else:
-                if self.filter is not None and self.filter.fetch(None, extend=var_dict):
+                if self.filter is not None and self.filter.fetch(extend=var_dict):
                     continue
-                ret = variable.fetch(None, extend=var_dict)
+                ret = variable.fetch(extend=var_dict)
                 items.append(ret)
         return items
 
@@ -58,9 +59,9 @@ class ForList(ProcessNode):
                 ret = self._for_loop(lists[0], i + 1, lists[1:], variable, var_dict)
                 items.extend(ret)
             else:
-                if self.filter is not None and self.filter.fetch(None, extend=var_dict):
+                if self.filter is not None and self.filter.fetch(extend=var_dict):
                     continue
-                ret = variable.fetch(None, extend=var_dict)
+                ret = variable.fetch(extend=var_dict)
                 items.append(ret)
         return items
 
@@ -77,16 +78,17 @@ class ForDict(ProcessNode):
         self.filter = Variable(filter) if filter else None
         self.out_bb = out_bb
 
-    async def process(self, flowdata: FlowData) -> FlowData:
-        lists = self.lists.fetch(flowdata)
-        var_dict = {"fd": FlowData}
+    async def process(self):
+        lists = self.lists.fetch()
+        var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
         if self.out_bb:
             _bb = bb.get()
             _bb[self.name] = items
         else:
+            flowdata = fd.get()
             flowdata[self.name] = items
-        return flowdata
+        return
 
     @singledispatchmethod
     def _for_loop(
@@ -105,10 +107,10 @@ class ForDict(ProcessNode):
                 ret = self._for_loop(lists[0], i + 1, lists[1:], key, val, var_dict)
                 items.update(ret)
             else:
-                if self.filter is not None and self.filter.fetch(None, extend=var_dict):
+                if self.filter is not None and self.filter.fetch(extend=var_dict):
                     continue
-                _key = key.fetch(None, extend=var_dict)
-                _val = val.fetch(None, extend=var_dict)
+                _key = key.fetch(extend=var_dict)
+                _val = val.fetch(extend=var_dict)
                 items[_key] = _val
         return items
 
@@ -124,9 +126,9 @@ class ForDict(ProcessNode):
                 ret = self._for_loop(lists[0], i + 1, lists[1:], key, val, var_dict)
                 items.update(ret)
             else:
-                if self.filter is not None and self.filter.fetch(None, extend=var_dict):
+                if self.filter is not None and self.filter.fetch(extend=var_dict):
                     continue
-                _key = key.fetch(None, extend=var_dict)
-                _val = val.fetch(None, extend=var_dict)
+                _key = key.fetch(extend=var_dict)
+                _val = val.fetch(extend=var_dict)
                 items[_key] = _val
         return items

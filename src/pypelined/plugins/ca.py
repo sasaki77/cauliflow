@@ -3,7 +3,7 @@ from functools import singledispatch
 import epics
 import janus
 
-from pypelined.flowdata import FlowData
+from pypelined.flowdata import fd, init_flowdata
 from pypelined.node import ProcessNode, TriggerNode, node
 from pypelined.variable import Variable
 
@@ -20,7 +20,8 @@ class CamonitorNode(TriggerNode):
         data = {"pv": {"name": pvname, "value": char_value}}
         self.q.sync_q.put(data)
 
-    async def process(self, flowdata: FlowData = None):
+    async def process(self):
+        flowdata = fd.get()
         pvnames = self.pvnames.fetch(flowdata)
         pvnames = _get_pvnames(pvnames)
 
@@ -30,9 +31,10 @@ class CamonitorNode(TriggerNode):
 
         while True:
             pvdata = await self.q.async_q.get()
-            d = FlowData()
-            d = {self.name: pvdata}
-            await self.child.run(d)
+            init_flowdata()
+            d = fd.get()
+            d[self.name] = pvdata
+            await self.child.run()
 
 
 @node.register("caget")
@@ -42,9 +44,9 @@ class CagetNode(ProcessNode):
         self.pvnames = Variable(pvname)
         self.pvs: list[epics.PV] | epics.PV = None
 
-    async def process(self, flowdata: FlowData):
+    async def process(self):
         if self.pvs is None:
-            pvnames = self.pvnames.fetch(flowdata)
+            pvnames = self.pvnames.fetch()
             pvnames = _get_pvnames(pvnames)
 
             self.pvs = []
@@ -56,8 +58,9 @@ class CagetNode(ProcessNode):
         for pv in self.pvs:
             val = pv.get()
             out.append({"pvname": pv.pvname, "val": val})
+        flowdata = fd.get()
         flowdata[self.name] = out
-        return flowdata
+        return
 
 
 @singledispatch

@@ -1,8 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
 
-from pypelined.flowdata import FlowData
-
 _logger = logging.getLogger(__name__)
 
 
@@ -30,7 +28,7 @@ class NodeFactory:
 
 class Node(ABC):
     @abstractmethod
-    async def run(self, flowdata: FlowData = {}): ...
+    async def run(self): ...
 
 
 class TriggerNode(Node):
@@ -41,9 +39,9 @@ class TriggerNode(Node):
     @abstractmethod
     async def process(self): ...
 
-    async def run(self, flowdata=None):
-        ndata = await self.process(flowdata)
-        await self.child.run(ndata)
+    async def run(self):
+        await self.process()
+        await self.child.run()
 
     def add_child(self, child: Node):
         self.child = child
@@ -55,13 +53,17 @@ class ProcessNode(Node):
         self.child: Node = None
 
     @abstractmethod
-    async def process(self, flowdata: FlowData): ...
+    async def process(
+        self,
+    ): ...
 
-    async def run(self, flowdata={}):
-        ndata = await self.process(flowdata)
+    async def run(
+        self,
+    ):
+        await self.process()
         if self.child is None:
             return
-        await self.child.run(ndata)
+        await self.child.run()
 
     def add_child(self, child: Node):
         self.child = child

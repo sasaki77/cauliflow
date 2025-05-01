@@ -3,7 +3,7 @@ from operator import contains
 from lark import Lark, Transformer, v_args
 
 from pypelined.blackboard import bb
-from pypelined.flowdata import FlowData
+from pypelined.flowdata import fd
 
 _grammar = """
     ?expression: disjunction
@@ -151,8 +151,9 @@ class Variable:
     def compile(self, expression):
         return _parser.parse(expression)
 
-    def fetch(self, flowdata: FlowData, extend: dict = {}):
+    def fetch(self, extend: dict = {}):
         _bb = bb.get()
+        flowdata = fd.get()
         vars = {"bb": _bb, "fd": flowdata}
         vars.update(extend)
         transformer = OperatorTree(vars)

@@ -3,7 +3,7 @@ from functools import singledispatchmethod
 
 from zabbix_utils import AsyncSender, AsyncZabbixAPI, ItemValue
 
-from pypelined.flowdata import FlowData
+from pypelined.flowdata import fd
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
 
@@ -20,7 +20,7 @@ class ZabbixGetItemNode(ProcessNode):
         self.filter = filter
         self.output = output
 
-    async def process(self, flowdata: FlowData):
+    async def process(self):
         self.api = AsyncZabbixAPI(url=self.url)
         await self.api.login(user=self.user, password=self.password)
 
@@ -28,8 +28,9 @@ class ZabbixGetItemNode(ProcessNode):
 
         await self.api.logout()
 
+        flowdata = fd.get()
         flowdata[self.name] = items
-        return flowdata
+        return
 
 
 @node.register("zabbix_send")
@@ -40,15 +41,15 @@ class ZabbixSend(ProcessNode):
         self.port = port
         self.input = Variable(input)
 
-    async def process(self, flowdata: FlowData):
+    async def process(self):
         sender = AsyncSender(server=self.server, port=self.port)
 
-        input = self.input.fetch(flowdata)
+        input = self.input.fetch()
         items = self._create_items(input)
         response = await sender.send(items)
         _logger.debug(response)
 
-        return flowdata
+        return
 
     @singledispatchmethod
     def _create_items(self, item):

@@ -1,4 +1,4 @@
-from pypelined.flowdata import FlowData
+from pypelined.flowdata import fd
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
 
@@ -9,6 +9,7 @@ class MessageNode(ProcessNode):
         super().__init__(name)
         self.msg = Variable(msg)
 
-    async def process(self, flowdata: FlowData):
-        flowdata[self.name] = self.msg.fetch(flowdata)
-        return flowdata
+    async def process(self):
+        flowdata = fd.get()
+        flowdata[self.name] = self.msg.fetch()
+        return

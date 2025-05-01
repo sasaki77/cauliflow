@@ -1,6 +1,6 @@
 import asyncio
 
-from pypelined.flowdata import FlowData
+from pypelined.flowdata import init_flowdata
 from pypelined.node import TriggerNode, node
 from pypelined.variable import Variable
 
@@ -11,9 +11,10 @@ class IntervalNode(TriggerNode):
         super().__init__(name)
         self.interval = Variable(interval)
 
-    async def process(self, flowdata: FlowData = None):
-        interval = self.interval.fetch(flowdata)
+    async def process(self):
+        interval = self.interval.fetch()
 
         while True:
+            init_flowdata()
             await self.child.run()
             await asyncio.sleep(interval)
