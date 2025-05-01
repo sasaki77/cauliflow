@@ -3,6 +3,7 @@ import logging
 from enum import StrEnum
 from pathlib import Path
 
+from pypelined.blackboard import bb
 from pypelined.flowdata import FlowData
 from pypelined.node import ProcessNode, node
 
@@ -19,22 +20,22 @@ class DataFormat(StrEnum):
 class InputCSVNode(ProcessNode):
     def __init__(
         self,
-        _bb,
         name,
         path: str,
         out_bb: bool = False,
         skip_header: bool = False,
         format: DataFormat = DataFormat.KEYVALUE,
     ):
-        super().__init__(_bb, name)
+        super().__init__(name)
         self.path = Path(path)
         self.out_bb = out_bb
         self.format = format
 
     async def process(self, flowdata: FlowData):
         csvdata = self.get_csvdata()
+        _bb = bb.get()
         if self.out_bb:
-            self.bb[self.name] = csvdata
+            _bb[self.name] = csvdata
         else:
             flowdata[self.name] = csvdata
 

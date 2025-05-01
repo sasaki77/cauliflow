@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class Flow:
     def __init__(self):
         self.bb = bb.get()
-        self.root: Node = node.create("root", _bb=self.bb, name="root")
+        self.root: Node = node.create("root", name="root")
         self.nodes = {}
         self.nodes["root"] = self.root
 
@@ -25,7 +25,7 @@ class Flow:
             _logger.warning(f"{name} is already registerd")
             return
 
-        self.nodes[name] = node.create(_plugin_name, _bb=self.bb, name=name, **kwargs)
+        self.nodes[name] = node.create(_plugin_name, name=name, **kwargs)
 
         if _parent:
             self.nodes[_parent].add_child(self.nodes[name])

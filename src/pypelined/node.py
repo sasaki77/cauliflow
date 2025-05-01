@@ -1,7 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
 
-from pypelined.blackboard import BlackBoard
 from pypelined.flowdata import FlowData
 
 _logger = logging.getLogger(__name__)
@@ -35,10 +34,9 @@ class Node(ABC):
 
 
 class TriggerNode(Node):
-    def __init__(self, _bb: BlackBoard, name: str):
+    def __init__(self, name: str):
         self.name: str = name
         self.child: Node = None
-        self.bb = _bb
 
     @abstractmethod
     async def process(self): ...
@@ -52,10 +50,9 @@ class TriggerNode(Node):
 
 
 class ProcessNode(Node):
-    def __init__(self, _bb: BlackBoard, name: str):
+    def __init__(self, name: str):
         self.name = name
         self.child: Node = None
-        self.bb = _bb
 
     @abstractmethod
     async def process(self, flowdata: FlowData): ...

@@ -1,6 +1,7 @@
 import logging
 from functools import singledispatchmethod
 
+from pypelined.blackboard import bb
 from pypelined.flowdata import FlowData
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
@@ -10,13 +11,11 @@ _logger = logging.getLogger(__name__)
 
 @node.register("for_list")
 class ForList(ProcessNode):
-    def __init__(
-        self, _bb, name, lists: list, expression: str, filter=None, out_bb=False
-    ):
-        super().__init__(_bb, name)
-        self.variable = Variable(expression, _bb)
-        self.lists = Variable(lists, _bb)
-        self.filter = Variable(filter, _bb) if filter else None
+    def __init__(self, name, lists: list, expression: str, filter=None, out_bb=False):
+        super().__init__(name)
+        self.variable = Variable(expression)
+        self.lists = Variable(lists)
+        self.filter = Variable(filter) if filter else None
         self.out_bb = out_bb
 
     async def process(self, flowdata: FlowData) -> FlowData:
@@ -24,7 +23,8 @@ class ForList(ProcessNode):
         var_dict = {"fd": FlowData}
         items = self._for_loop(lists[0], 0, lists[1:], self.variable, var_dict)
         if self.out_bb:
-            self.bb[self.name] = items
+            _bb = bb.get()
+            _bb[self.name] = items
         else:
             flowdata[self.name] = items
         return flowdata
@@ -68,13 +68,13 @@ class ForList(ProcessNode):
 @node.register("for_dict")
 class ForDict(ProcessNode):
     def __init__(
-        self, _bb, name, lists: list, key: str, val: str, filter=None, out_bb=False
+        self, name, lists: list, key: str, val: str, filter=None, out_bb=False
     ):
-        super().__init__(_bb, name)
-        self.key = Variable(key, _bb)
-        self.val = Variable(val, _bb)
-        self.lists = Variable(lists, _bb)
-        self.filter = Variable(filter, _bb) if filter else None
+        super().__init__(name)
+        self.key = Variable(key)
+        self.val = Variable(val)
+        self.lists = Variable(lists)
+        self.filter = Variable(filter) if filter else None
         self.out_bb = out_bb
 
     async def process(self, flowdata: FlowData) -> FlowData:
@@ -82,7 +82,8 @@ class ForDict(ProcessNode):
         var_dict = {"fd": FlowData}
         items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
         if self.out_bb:
-            self.bb[self.name] = items
+            _bb = bb.get()
+            _bb[self.name] = items
         else:
             flowdata[self.name] = items
         return flowdata

@@ -2,7 +2,7 @@ from operator import contains
 
 from lark import Lark, Transformer, v_args
 
-from pypelined.blackboard import BlackBoard
+from pypelined.blackboard import bb
 from pypelined.flowdata import FlowData
 
 _grammar = """
@@ -144,16 +144,15 @@ _parser = Lark(_grammar, start="expression", parser="lalr")
 
 
 class Variable:
-    def __init__(self, expression, bb: BlackBoard = None):
+    def __init__(self, expression):
         self.expression = expression
-        self.bb = bb
         self.parse_tree = self.compile(expression)
 
     def compile(self, expression):
         return _parser.parse(expression)
 
-    def fetch(self, flowdata: FlowData, bb: BlackBoard = None, extend: dict = {}):
-        _bb = self.bb if bb is None else bb
+    def fetch(self, flowdata: FlowData, extend: dict = {}):
+        _bb = bb.get()
         vars = {"bb": _bb, "fd": flowdata}
         vars.update(extend)
         transformer = OperatorTree(vars)

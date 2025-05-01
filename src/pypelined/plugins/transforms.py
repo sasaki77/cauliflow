@@ -1,6 +1,7 @@
 from copy import deepcopy
 from functools import singledispatchmethod
 
+from pypelined.blackboard import bb
 from pypelined.flowdata import FlowData
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
@@ -8,16 +9,17 @@ from pypelined.variable import Variable
 
 @node.register("dict_keys")
 class DictKeysNode(ProcessNode):
-    def __init__(self, _bb, name, input, out_bb=False):
-        super().__init__(_bb, name)
-        self.input: dict = Variable(input, _bb)
+    def __init__(self, name, input, out_bb=False):
+        super().__init__(name)
+        self.input: dict = Variable(input)
         self.out_bb = out_bb
 
     async def process(self, flowdata: FlowData):
         dikt = self.input.fetch(flowdata)
         out = list(dikt.keys())
         if self.out_bb:
-            self.bb[self.name] = out
+            _bb = bb.get()
+            _bb[self.name] = out
         else:
             flowdata[self.name] = out
         return flowdata
@@ -25,16 +27,17 @@ class DictKeysNode(ProcessNode):
 
 @node.register("dict_values")
 class DictValuesNode(ProcessNode):
-    def __init__(self, _bb, name, input, out_bb=False):
-        super().__init__(_bb, name)
-        self.input: dict = Variable(input, _bb)
+    def __init__(self, name, input, out_bb=False):
+        super().__init__(name)
+        self.input: dict = Variable(input)
         self.out_bb = out_bb
 
     async def process(self, flowdata: FlowData):
         dikt = self.input.fetch(flowdata)
         out = list(dikt.values())
         if self.out_bb:
-            self.bb[self.name] = out
+            _bb = bb.get()
+            _bb[self.name] = out
         else:
             flowdata[self.name] = out
         return flowdata
@@ -42,10 +45,10 @@ class DictValuesNode(ProcessNode):
 
 @node.register("concat")
 class ConcatNode(ProcessNode):
-    def __init__(self, _bb, name, first, second, out_bb=False):
-        super().__init__(_bb, name)
-        self.first: dict = Variable(first, _bb)
-        self.second: dict = Variable(second, _bb)
+    def __init__(self, name, first, second, out_bb=False):
+        super().__init__(name)
+        self.first: dict = Variable(first)
+        self.second: dict = Variable(second)
         self.out_bb = out_bb
 
     async def process(self, flowdata: FlowData):
@@ -53,7 +56,8 @@ class ConcatNode(ProcessNode):
         second = self.second.fetch(flowdata)
         out = self._concat(first, second)
         if self.out_bb:
-            self.bb[self.name] = out
+            _bb = bb.get()
+            _bb[self.name] = out
         else:
             flowdata[self.name] = out
         return flowdata
@@ -82,25 +86,25 @@ class ConcatNode(ProcessNode):
 class MutateNode(ProcessNode):
     def __init__(
         self,
-        _bb,
         name,
         target: str = None,
         split: dict = {},
         copy: dict = {},
         out_bb: bool = False,
     ):
-        super().__init__(_bb, name)
+        super().__init__(name)
         self.out_bb = out_bb
         self.split_dict = split
         self.copy_dict = copy
-        self.target = Variable(target, _bb)
+        self.target = Variable(target)
 
     async def process(self, flowdata: FlowData):
         target = self.target.fetch(flowdata)
         target = deepcopy(target)
         self.apply(target)
         if self.out_bb:
-            self.bb[self.name] = target
+            _bb = bb.get()
+            bb[self.name] = target
         else:
             flowdata[self.name] = target
         return flowdata

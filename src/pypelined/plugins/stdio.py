@@ -7,9 +7,9 @@ from pypelined.variable import Variable
 
 @node.register("stdout")
 class OutNode(ProcessNode):
-    def __init__(self, _bb, name, src=None, pretty=False):
-        super().__init__(_bb, name)
-        self.src = src if src is None else Variable(src, _bb)
+    def __init__(self, name, src=None, pretty=False):
+        super().__init__(name)
+        self.src = src if src is None else Variable(src)
         self.print_func = pprint if pretty else print
 
     async def process(self, flowdata: FlowData):

@@ -7,9 +7,9 @@ from pypelined.variable import Variable
 
 @node.register("interval")
 class IntervalNode(TriggerNode):
-    def __init__(self, _bb, name, interval):
-        super().__init__(_bb, name)
-        self.interval = Variable(interval, _bb)
+    def __init__(self, name, interval):
+        super().__init__(name)
+        self.interval = Variable(interval)
 
     async def process(self, flowdata: FlowData = None):
         interval = self.interval.fetch(flowdata)

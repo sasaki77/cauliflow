@@ -12,8 +12,8 @@ _logger = logging.getLogger(__name__)
 
 @node.register("zabbix_get_item")
 class ZabbixGetItemNode(ProcessNode):
-    def __init__(self, _bb, name, url, user, password, filter, output):
-        super().__init__(_bb, name)
+    def __init__(self, name, url, user, password, filter, output):
+        super().__init__(name)
         self.url = url
         self.user = user
         self.password = password
@@ -34,11 +34,11 @@ class ZabbixGetItemNode(ProcessNode):
 
 @node.register("zabbix_send")
 class ZabbixSend(ProcessNode):
-    def __init__(self, _bb, name, input, server, port=10051):
-        super().__init__(_bb, name)
+    def __init__(self, name, input, server, port=10051):
+        super().__init__(name)
         self.server = server
         self.port = port
-        self.input = Variable(input, _bb)
+        self.input = Variable(input)
 
     async def process(self, flowdata: FlowData):
         sender = AsyncSender(server=self.server, port=self.port)

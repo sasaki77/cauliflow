@@ -10,10 +10,10 @@ from pypelined.variable import Variable
 
 @node.register("camonitor")
 class CamonitorNode(TriggerNode):
-    def __init__(self, _bb, name, pvname):
-        super().__init__(_bb, name)
+    def __init__(self, name, pvname):
+        super().__init__(name)
         self.q = janus.Queue()
-        self.pvnames = Variable(pvname, _bb)
+        self.pvnames = Variable(pvname)
         self.pvs = []
 
     def onChanges(self, pvname=None, value=None, char_value=None, **kw):
@@ -37,9 +37,9 @@ class CamonitorNode(TriggerNode):
 
 @node.register("caget")
 class CagetNode(ProcessNode):
-    def __init__(self, _bb, name, pvname):
-        super().__init__(_bb, name)
-        self.pvnames = Variable(pvname, _bb)
+    def __init__(self, name, pvname):
+        super().__init__(name)
+        self.pvnames = Variable(pvname)
         self.pvs: list[epics.PV] | epics.PV = None
 
     async def process(self, flowdata: FlowData):
