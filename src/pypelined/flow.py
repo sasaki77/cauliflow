@@ -1,22 +1,23 @@
 import asyncio
 import logging
+from abc import ABC, abstractmethod
 
-from pypelined.blackboard import BlackBoard
+from pypelined.blackboard import bb
 from pypelined.node import Node, node
 
 _logger = logging.getLogger(__name__)
 
 
 class Flow:
-    def __init__(self, root: Node = None):
-        self.bb = BlackBoard()
+    def __init__(self):
+        self.bb = bb.get()
         self.root: Node = node.create("root", _bb=self.bb, name="root")
         self.nodes = {}
         self.nodes["root"] = self.root
 
-    def run(self):
+    async def run(self):
         _logger.debug("run starts")
-        asyncio.run(self.root.run())
+        await self.root.run()
         _logger.debug("run end")
 
     def create_node(self, _plugin_name, _parent, name, **kwargs):
@@ -28,3 +29,27 @@ class Flow:
 
         if _parent:
             self.nodes[_parent].add_child(self.nodes[name])
+
+
+class Flows(ABC):
+    @abstractmethod
+    async def run(self): ...
+
+
+class ConcurrentFlows(Flows):
+    def __init__(self):
+        self.flows: list[Flow | Flows] = []
+
+    async def run(self):
+        async with asyncio.TaskGroup() as tg:
+            for task in self.flows:
+                tg.create_task(task.run())
+
+
+class SequentialFlows(Flows):
+    def __init__(self):
+        self.flows: list[Flow | Flows] = []
+
+    async def run(self):
+        for task in self.flows:
+            await task.run()

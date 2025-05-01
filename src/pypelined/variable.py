@@ -1,4 +1,3 @@
-from enum import Enum
 from operator import contains
 
 from lark import Lark, Transformer, v_args
