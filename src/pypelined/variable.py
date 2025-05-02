@@ -4,6 +4,7 @@ from lark import Lark, Transformer, v_args
 
 from pypelined.blackboard import blackboard
 from pypelined.flowdata import flowdata
+from pypelined.macros import macros
 
 _grammar = """
     ?expression: disjunction
@@ -152,9 +153,10 @@ class Variable:
         return _parser.parse(expression)
 
     def fetch(self, extend: dict = {}):
-        _bb = blackboard.get()
+        bb = blackboard.get()
         fd = flowdata.get()
-        vars = {"bb": _bb, "fd": fd}
+        mcr = macros.get()
+        vars = {"bb": bb, "fd": fd, "macros": mcr}
         vars.update(extend)
         transformer = OperatorTree(vars)
         result = transformer.transform(self.parse_tree)
