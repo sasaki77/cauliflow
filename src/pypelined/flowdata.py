@@ -9,8 +9,8 @@ class FlowData(UserDict):
         self.data[key] = item
 
 
-fd = ContextVar("fd", default=FlowData())
+flowdata = ContextVar("flowdata", default=FlowData())
 
 
 def init_flowdata():
-    fd.set(FlowData())
+    flowdata.set(FlowData())

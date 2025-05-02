@@ -6,4 +6,4 @@ class BlackBoard(UserDict):
     pass
 
 
-bb = ContextVar("bb", default=BlackBoard())
+blackboard = ContextVar("blackboard", default=BlackBoard())

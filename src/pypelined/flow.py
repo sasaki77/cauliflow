@@ -2,7 +2,7 @@ import asyncio
 import logging
 from abc import ABC, abstractmethod
 
-from pypelined.blackboard import bb
+from pypelined.blackboard import blackboard
 from pypelined.node import Node, node
 
 _logger = logging.getLogger(__name__)
@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class Flow:
     def __init__(self):
-        self.bb = bb.get()
+        self.blackboard = blackboard.get()
         self.root: Node = node.create("root", name="root")
         self.nodes = {}
         self.nodes["root"] = self.root
