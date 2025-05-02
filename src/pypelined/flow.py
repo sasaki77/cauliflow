@@ -35,11 +35,17 @@ class Flows(ABC):
     @abstractmethod
     async def run(self): ...
 
-
-class ConcurrentFlows(Flows):
     def __init__(self):
         self.flows: list[Flow | Flows] = []
 
+    def append(self, flow):
+        self.flows.append(flow)
+
+    def extend(self, flow):
+        self.flows.extend(flow)
+
+
+class ConcurrentFlows(Flows):
     async def run(self):
         async with asyncio.TaskGroup() as tg:
             for task in self.flows:
@@ -47,9 +53,6 @@ class ConcurrentFlows(Flows):
 
 
 class SequentialFlows(Flows):
-    def __init__(self):
-        self.flows: list[Flow | Flows] = []
-
     async def run(self):
         for task in self.flows:
             await task.run()
