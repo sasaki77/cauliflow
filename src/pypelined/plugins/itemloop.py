@@ -1,8 +1,7 @@
 import logging
 from functools import singledispatchmethod
 
-from pypelined.blackboard import blackboard
-from pypelined.flowdata import flowdata
+from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
 
@@ -23,10 +22,10 @@ class ForList(ProcessNode):
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.variable, var_dict)
         if self.out_bb:
-            _bb = blackboard.get()
+            _bb = ctx_blackboard.get()
             _bb[self.name] = items
         else:
-            fd = flowdata.get()
+            fd = ctx_flowdata.get()
             fd[self.name] = items
         return
 
@@ -83,10 +82,10 @@ class ForDict(ProcessNode):
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
         if self.out_bb:
-            _bb = blackboard.get()
+            _bb = ctx_blackboard.get()
             _bb[self.name] = items
         else:
-            fd = flowdata.get()
+            fd = ctx_flowdata.get()
             fd[self.name] = items
         return
 

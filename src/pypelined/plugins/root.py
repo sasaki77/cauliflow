@@ -1,4 +1,4 @@
-from pypelined.flowdata import init_flowdata
+from pypelined.context import init_flowdata
 from pypelined.node import ProcessNode, node
 
 

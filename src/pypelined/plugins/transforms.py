@@ -1,8 +1,7 @@
 from copy import deepcopy
 from functools import singledispatchmethod
 
-from pypelined.blackboard import blackboard
-from pypelined.flowdata import flowdata
+from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
 
@@ -18,10 +17,10 @@ class DictKeysNode(ProcessNode):
         dikt = self.input.fetch()
         out = list(dikt.keys())
         if self.out_bb:
-            _bb = blackboard.get()
+            _bb = ctx_blackboard.get()
             _bb[self.name] = out
         else:
-            fd = flowdata.get()
+            fd = ctx_flowdata.get()
             fd[self.name] = out
         return
 
@@ -37,10 +36,10 @@ class DictValuesNode(ProcessNode):
         dikt = self.input.fetch()
         out = list(dikt.values())
         if self.out_bb:
-            _bb = blackboard.get()
+            _bb = ctx_blackboard.get()
             _bb[self.name] = out
         else:
-            fd = flowdata.get()
+            fd = ctx_flowdata.get()
             fd[self.name] = out
         return
 
@@ -58,10 +57,10 @@ class ConcatNode(ProcessNode):
         second = self.second.fetch()
         out = self._concat(first, second)
         if self.out_bb:
-            _bb = blackboard.get()
+            _bb = ctx_blackboard.get()
             _bb[self.name] = out
         else:
-            fd = flowdata.get()
+            fd = ctx_flowdata.get()
             fd[self.name] = out
         return
 
@@ -106,10 +105,10 @@ class MutateNode(ProcessNode):
         target = deepcopy(target)
         self.apply(target)
         if self.out_bb:
-            _bb = blackboard.get()
+            _bb = ctx_blackboard.get()
             _bb[self.name] = target
         else:
-            fd = flowdata.get()
+            fd = ctx_flowdata.get()
             fd[self.name] = target
         return
 

@@ -1,6 +1,6 @@
 import asyncio
 
-from pypelined.flowdata import init_flowdata
+from pypelined.context import init_flowdata
 from pypelined.node import TriggerNode, node
 from pypelined.variable import Variable
 

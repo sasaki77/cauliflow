@@ -2,9 +2,7 @@ from operator import contains
 
 from lark import Lark, Transformer, v_args
 
-from pypelined.blackboard import blackboard
-from pypelined.flowdata import flowdata
-from pypelined.macros import macros
+from pypelined.context import ctx_blackboard, ctx_flowdata, ctx_macros
 
 _grammar = """
     ?expression: disjunction
@@ -153,9 +151,9 @@ class Variable:
         return _parser.parse(expression)
 
     def fetch(self, extend: dict = {}):
-        bb = blackboard.get()
-        fd = flowdata.get()
-        mcr = macros.get()
+        bb = ctx_blackboard.get()
+        fd = ctx_flowdata.get()
+        mcr = ctx_macros.get()
         vars = {"bb": bb, "fd": fd, "macros": mcr}
         vars.update(extend)
         transformer = OperatorTree(vars)

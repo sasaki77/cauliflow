@@ -3,8 +3,7 @@ import logging
 from enum import StrEnum
 from pathlib import Path
 
-from pypelined.blackboard import blackboard
-from pypelined.flowdata import flowdata
+from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.node import ProcessNode, node
 
 _logger = logging.getLogger(__name__)
@@ -33,11 +32,11 @@ class InputCSVNode(ProcessNode):
 
     async def process(self):
         csvdata = self.get_csvdata()
-        _bb = blackboard.get()
+        _bb = ctx_blackboard.get()
         if self.out_bb:
             _bb[self.name] = csvdata
         else:
-            fd = flowdata.get()
+            fd = ctx_flowdata.get()
             fd[self.name] = csvdata
 
         return

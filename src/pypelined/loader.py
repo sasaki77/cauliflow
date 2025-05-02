@@ -3,8 +3,9 @@ from logging import getLogger
 
 import yaml
 
+from pypelined.context import ctx_macros
 from pypelined.flow import ConcurrentFlows, Flow, Flows, SequentialFlows
-from pypelined.macros import Macros, macros
+from pypelined.macros import Macros
 
 _logger = getLogger(__name__)
 
@@ -33,7 +34,7 @@ def flow_from_yaml(file_path) -> Flows:
     if "macros" in yaml_dict:
         mcr = Macros()
         mcr.update(yaml_dict["macros"])
-        macros.set(mcr)
+        ctx_macros.set(mcr)
 
     return flows
 

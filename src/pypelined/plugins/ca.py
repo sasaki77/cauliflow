@@ -3,7 +3,7 @@ from functools import singledispatch
 import epics
 import janus
 
-from pypelined.flowdata import flowdata, init_flowdata
+from pypelined.context import ctx_flowdata, init_flowdata
 from pypelined.node import ProcessNode, TriggerNode, node
 from pypelined.variable import Variable
 
@@ -21,7 +21,7 @@ class CamonitorNode(TriggerNode):
         self.q.sync_q.put(data)
 
     async def process(self):
-        fd = flowdata.get()
+        fd = ctx_flowdata.get()
         pvnames = self.pvnames.fetch(fd)
         pvnames = _get_pvnames(pvnames)
 
@@ -32,7 +32,7 @@ class CamonitorNode(TriggerNode):
         while True:
             pvdata = await self.q.async_q.get()
             init_flowdata()
-            d = flowdata.get()
+            d = ctx_flowdata.get()
             d[self.name] = pvdata
             await self.child.run()
 
@@ -58,7 +58,7 @@ class CagetNode(ProcessNode):
         for pv in self.pvs:
             val = pv.get()
             out.append({"pvname": pv.pvname, "val": val})
-        fd = flowdata.get()
+        fd = ctx_flowdata.get()
         fd[self.name] = out
         return
 

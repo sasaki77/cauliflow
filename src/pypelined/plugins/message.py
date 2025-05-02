@@ -1,4 +1,4 @@
-from pypelined.flowdata import flowdata
+from pypelined.context import ctx_flowdata
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
 
@@ -10,6 +10,6 @@ class MessageNode(ProcessNode):
         self.msg = Variable(msg)
 
     async def process(self):
-        fd = flowdata.get()
+        fd = ctx_flowdata.get()
         fd[self.name] = self.msg.fetch()
         return

@@ -3,7 +3,7 @@ from functools import singledispatchmethod
 
 from zabbix_utils import AsyncSender, AsyncZabbixAPI, ItemValue
 
-from pypelined.flowdata import flowdata
+from pypelined.context import ctx_flowdata
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
 
@@ -28,7 +28,7 @@ class ZabbixGetItemNode(ProcessNode):
 
         await self.api.logout()
 
-        fd = flowdata.get()
+        fd = ctx_flowdata.get()
         fd[self.name] = items
         return
 
