@@ -76,7 +76,8 @@ def _make_con(config: dict):
 def _make_flow(config: dict):
     if "flow" not in config:
         _logger.error("no flow in flow")
-    flow = Flow()
+    name = config.get("name", None)
+    flow = Flow(name=name)
     prev_node = "root"
     for node in config["flow"]:
         if len(node) != 1:

@@ -1,7 +1,13 @@
 import asyncio
 from abc import ABC, abstractmethod
 
-from pypelined.context import ctx_blackboard
+from pypelined.context import (
+    ContextFlow,
+    ContextNode,
+    ctx_blackboard,
+    ctx_flow,
+    ctx_node,
+)
 from pypelined.logging import get_logger
 from pypelined.node import Node, node
 
@@ -9,15 +15,18 @@ _logger = get_logger(__name__)
 
 
 class Flow:
-    def __init__(self):
+    def __init__(self, name=None):
         self.blackboard = ctx_blackboard.get()
+        self.name = name
         self.root: Node = node.create("root", name="root")
         self.nodes = {}
         self.nodes["root"] = self.root
 
     async def run(self):
+        ctx_flow.set(ContextFlow(name=self.name))
         _logger.debug("run starts")
         await self.root.run()
+        ctx_node.set(ContextNode(name=None))
         _logger.debug("run end")
 
     def create_node(self, _plugin_name, _parent, name, **kwargs):

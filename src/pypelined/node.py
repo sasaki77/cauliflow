@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from pypelined.context import ContextNode, ctx_node
 from pypelined.logging import get_logger
 
 _logger = get_logger(__name__)
@@ -41,6 +42,7 @@ class TriggerNode(Node):
     async def process(self): ...
 
     async def run(self):
+        ctx_node.set(ContextNode(name=self.name))
         await self.process()
         await self.child.run()
 
@@ -61,6 +63,7 @@ class ProcessNode(Node):
     async def run(
         self,
     ):
+        ctx_node.set(ContextNode(name=self.name))
         await self.process()
         if self.child is None:
             return
