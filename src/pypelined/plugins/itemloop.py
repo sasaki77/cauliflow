@@ -1,11 +1,11 @@
-import logging
 from functools import singledispatchmethod
 
 from pypelined.context import ctx_blackboard, ctx_flowdata
+from pypelined.logging import get_logger
 from pypelined.node import ProcessNode, node
 from pypelined.variable import Variable
 
-_logger = logging.getLogger(__name__)
+_logger = get_logger(__name__)
 
 
 @node.register("for_list")

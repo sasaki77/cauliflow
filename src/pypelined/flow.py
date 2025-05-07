@@ -1,11 +1,11 @@
 import asyncio
-import logging
 from abc import ABC, abstractmethod
 
 from pypelined.context import ctx_blackboard
+from pypelined.logging import get_logger
 from pypelined.node import Node, node
 
-_logger = logging.getLogger(__name__)
+_logger = get_logger(__name__)
 
 
 class Flow:

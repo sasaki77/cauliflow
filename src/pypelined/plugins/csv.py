@@ -1,12 +1,12 @@
 import csv
-import logging
 from enum import StrEnum
 from pathlib import Path
 
 from pypelined.context import ctx_blackboard, ctx_flowdata
+from pypelined.logging import get_logger
 from pypelined.node import ProcessNode, node
 
-_logger = logging.getLogger(__name__)
+_logger = get_logger(__name__)
 
 
 class DataFormat(StrEnum):

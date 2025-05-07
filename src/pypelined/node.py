@@ -1,7 +1,8 @@
-import logging
 from abc import ABC, abstractmethod
 
-_logger = logging.getLogger(__name__)
+from pypelined.logging import get_logger
+
+_logger = get_logger(__name__)
 
 
 class NodeFactory:

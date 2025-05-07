@@ -1,5 +1,5 @@
 import asyncio
-from logging import DEBUG, Formatter, StreamHandler, getLogger
+from logging import DEBUG, getLogger
 
 import click
 
@@ -11,13 +11,7 @@ from pypelined.plugin_manager import PluginManager
 
 def init_logger():
     logger = getLogger("pypelined")
-    handler = StreamHandler()
-    handler.setLevel(DEBUG)
-    formatter = Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    handler.setFormatter(formatter)
     logger.setLevel(DEBUG)
-    logger.addHandler(handler)
-    logger.propagate = False
 
 
 @click.group()
