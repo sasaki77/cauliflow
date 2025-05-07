@@ -1,6 +1,12 @@
 from abc import ABC, abstractmethod
 
-from pypelined.context import ContextNode, ctx_node
+from pypelined.context import (
+    ContextNode,
+    ctx_blackboard,
+    ctx_flowdata,
+    ctx_flows,
+    ctx_node,
+)
 from pypelined.logging import get_logger
 
 _logger = get_logger(__name__)
@@ -44,6 +50,10 @@ class TriggerNode(Node):
     async def run(self):
         ctx_node.set(ContextNode(name=self.name))
         await self.process()
+        flows = ctx_flows.get()
+        if flows.debug:
+            _log_debug()
+
         await self.child.run()
 
     def add_child(self, child: Node):
@@ -65,12 +75,21 @@ class ProcessNode(Node):
     ):
         ctx_node.set(ContextNode(name=self.name))
         await self.process()
+        flows = ctx_flows.get()
+        if flows.debug:
+            _log_debug()
         if self.child is None:
             return
         await self.child.run()
 
     def add_child(self, child: Node):
         self.child = child
+
+
+def _log_debug():
+    flowdata = ctx_flowdata.get()
+    blackboard = ctx_blackboard.get()
+    _logger.debug(f"flowdata={flowdata}, blackboard={blackboard}")
 
 
 node = NodeFactory

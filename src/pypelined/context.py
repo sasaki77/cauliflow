@@ -7,6 +7,11 @@ from pypelined.macros import Macros
 
 
 @dataclass
+class ContextFlows:
+    debug: bool = False
+
+
+@dataclass
 class ContextFlow:
     name: str = None
 
@@ -19,6 +24,7 @@ class ContextNode:
 ctx_macros = ContextVar("pypelined.ctx_macros", default=Macros())
 ctx_flowdata = ContextVar("pypelined.ctx_flowdata", default=FlowData())
 ctx_blackboard = ContextVar("pypelined.ctx_blackboard", default=BlackBoard())
+ctx_flows = ContextVar("pypelind.ct_flows", default=ContextFlows())
 ctx_flow = ContextVar("pypelind.ct_flow", default=ContextFlow())
 ctx_node = ContextVar("pypelind.ct_node", default=ContextNode())
 
