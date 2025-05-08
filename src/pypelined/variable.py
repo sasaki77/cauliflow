@@ -9,7 +9,6 @@ _grammar = """
     text: /[^{}]+/
     expression_wrapper: "{{" expression "}}"
     ?expression: disjunction
-        | NAME "=" disjunction    -> assign_var
 
     ?disjunction: conjunction
         | conjunction "or" conjunction -> or_
@@ -139,10 +138,6 @@ class OperatorTree(Transformer):
 
     def expression_wrapper(self, expression) -> any:
         return expression
-
-    def assign_var(self, name, value: any) -> any:
-        self.vars[name] = value
-        return value
 
     def contains_(self, a: any, b: any) -> bool:
         return contains(b, a)
