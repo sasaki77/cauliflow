@@ -13,11 +13,11 @@ class OutNode(ProcessNode):
         self.print_func = pprint if pretty else print
 
     async def process(self):
-        fd = ctx_flowdata.get()
         if self.src is None:
+            fd = ctx_flowdata.get()
             self.print_func(fd)
             return
 
-        out = self.src.fetch(fd)
+        out = self.src.fetch()
         self.print_func(out)
         return
