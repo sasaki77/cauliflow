@@ -6,7 +6,6 @@ import click
 from pypelined.context import ContextFlows, ctx_flows, ctx_macros
 from pypelined.loader import flow_from_yaml
 from pypelined.logging import get_logger
-from pypelined.macros import Macros
 from pypelined.plugin_manager import PluginManager
 
 _logger = get_logger(__name__)
@@ -36,7 +35,7 @@ def run(macros, debug, filename):
     flows = flow_from_yaml(filename)
 
     macros_dict = dict(macros)
-    mcr = Macros()
+    mcr = ctx_macros.get()
     mcr.update(macros_dict)
     ctx_macros.set(mcr)
     if debug:
