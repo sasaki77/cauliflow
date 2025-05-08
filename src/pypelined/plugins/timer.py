@@ -7,11 +7,11 @@ from pypelined.variable import Variable
 
 @node.register("interval")
 class IntervalNode(TriggerNode):
-    def __init__(self, name, interval):
+    def __init__(self, name: str, interval: str):
         super().__init__(name)
         self.interval = Variable(interval)
 
-    async def process(self):
+    async def process(self) -> None:
         interval = self.interval.fetch()
 
         while True:

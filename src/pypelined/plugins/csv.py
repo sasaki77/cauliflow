@@ -20,18 +20,18 @@ class DataFormat(StrEnum):
 class InputCSVNode(ProcessNode):
     def __init__(
         self,
-        name,
+        name: str,
         path: str,
         out_bb: bool = False,
         skip_header: bool = False,
-        format: DataFormat = DataFormat.KEYVALUE,
+        format: str | DataFormat = DataFormat.KEYVALUE,
     ):
         super().__init__(name)
         self.path = Variable(path)
         self.out_bb = out_bb
         self.format = format
 
-    async def process(self):
+    async def process(self) -> None:
         path = self.path.fetch()
         csvdata = self.get_csvdata(Path(path))
         _bb = ctx_blackboard.get()
@@ -41,9 +41,7 @@ class InputCSVNode(ProcessNode):
             fd = ctx_flowdata.get()
             fd[self.name] = csvdata
 
-        return
-
-    def get_csvdata(self, path: Path):
+    def get_csvdata(self, path: Path) -> None:
         with path.open(newline="") as csvfile:
             if self.format == DataFormat.DICT:
                 reader = csv.DictReader(csvfile, skipinitialspace=True)

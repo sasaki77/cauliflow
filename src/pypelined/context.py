@@ -29,5 +29,5 @@ ctx_flow = ContextVar("pypelind.ctx_flow", default=ContextFlow())
 ctx_node = ContextVar("pypelind.ctx_node", default=ContextNode())
 
 
-def init_flowdata():
+def init_flowdata() -> None:
     ctx_flowdata.set(FlowData())

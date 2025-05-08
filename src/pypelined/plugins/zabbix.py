@@ -12,7 +12,9 @@ _logger = get_logger(__name__)
 
 @node.register("zabbix_get_item")
 class ZabbixGetItemNode(ProcessNode):
-    def __init__(self, name, url, user, password, filter, output):
+    def __init__(
+        self, name: str, url: str, user: str, password: str, filter: str, output: str
+    ):
         super().__init__(name)
         self.url = url
         self.user = user
@@ -20,7 +22,7 @@ class ZabbixGetItemNode(ProcessNode):
         self.filter = filter
         self.output = output
 
-    async def process(self):
+    async def process(self) -> None:
         self.api = AsyncZabbixAPI(url=self.url)
         await self.api.login(user=self.user, password=self.password)
 
@@ -30,18 +32,17 @@ class ZabbixGetItemNode(ProcessNode):
 
         fd = ctx_flowdata.get()
         fd[self.name] = items
-        return
 
 
 @node.register("zabbix_send")
 class ZabbixSend(ProcessNode):
-    def __init__(self, name, input, server, port=10051):
+    def __init__(self, name: str, input: str, server: str, port: int = 10051):
         super().__init__(name)
         self.server = server
         self.port = port
         self.input = Variable(input)
 
-    async def process(self):
+    async def process(self) -> None:
         sender = AsyncSender(server=self.server, port=self.port)
 
         input = self.input.fetch()
@@ -49,14 +50,12 @@ class ZabbixSend(ProcessNode):
         response = await sender.send(items)
         _logger.debug(response)
 
-        return
-
     @singledispatchmethod
-    def _create_items(self, item):
+    def _create_items(self, item: dict) -> list[ItemValue]:
         return [ItemValue(item["hostname"], item["key"], item["value"])]
 
     @_create_items.register
-    def _(self, items: list):
+    def _(self, items: list) -> list[ItemValue]:
         item_list = []
         for item in items:
             item_list.append(ItemValue(item["hostname"], item["key"], item["value"]))

@@ -1,5 +1,6 @@
 from enum import StrEnum
 from logging import getLogger
+from pathlib import Path
 
 import yaml
 
@@ -15,7 +16,7 @@ class FlowsType(StrEnum):
     CONCURRENT = "concurrent"
 
 
-def flow_from_yaml(file_path) -> Flows:
+def flow_from_yaml(file_path: str | Path) -> Flows:
     yaml_dict = _load_yaml(file_path)
 
     is_seq = FlowsType.SEQUENCTIAL in yaml_dict
@@ -55,7 +56,7 @@ def _make_flows(flows: dict) -> Flows:
     return flow_list
 
 
-def _make_seq(config: dict):
+def _make_seq(config: dict) -> Flows:
     if "flows" not in config:
         _logger.error("no flows in sequential flow")
     flows = SequentialFlows()
@@ -64,7 +65,7 @@ def _make_seq(config: dict):
     return flows
 
 
-def _make_con(config: dict):
+def _make_con(config: dict) -> Flows:
     if "flows" not in config:
         _logger.error("no flows in concurrent flow")
     flows = ConcurrentFlows()
@@ -73,7 +74,7 @@ def _make_con(config: dict):
     return flows
 
 
-def _make_flow(config: dict):
+def _make_flow(config: dict) -> Flow:
     if "flow" not in config:
         _logger.error("no flow in flow")
     name = config.get("name", None)
@@ -94,7 +95,7 @@ def _make_flow(config: dict):
     return flow
 
 
-def _load_yaml(file_path):
+def _load_yaml(file_path: str | Path) -> dict:
     with open(file_path, "r") as file:
         data = yaml.safe_load(file)
     return data

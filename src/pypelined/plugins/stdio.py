@@ -7,12 +7,12 @@ from pypelined.variable import Variable
 
 @node.register("stdout")
 class OutNode(ProcessNode):
-    def __init__(self, name, src=None, pretty=False):
+    def __init__(self, name: str, src: str | None = None, pretty: bool = False):
         super().__init__(name)
         self.src = src if src is None else Variable(src)
         self.print_func = pprint if pretty else print
 
-    async def process(self):
+    async def process(self) -> None:
         if self.src is None:
             fd = ctx_flowdata.get()
             self.print_func(fd)
@@ -20,4 +20,3 @@ class OutNode(ProcessNode):
 
         out = self.src.fetch()
         self.print_func(out)
-        return

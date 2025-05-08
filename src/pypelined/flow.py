@@ -15,21 +15,23 @@ _logger = get_logger(__name__)
 
 
 class Flow:
-    def __init__(self, name=None):
+    def __init__(self, name: str | None = None):
         self.blackboard = ctx_blackboard.get()
         self.name = name
         self.root: Node = node.create("root", name="root")
         self.nodes = {}
         self.nodes["root"] = self.root
 
-    async def run(self):
+    async def run(self) -> None:
         ctx_flow.set(ContextFlow(name=self.name))
         _logger.debug("run starts")
         await self.root.run()
         ctx_node.set(ContextNode(name=None))
         _logger.debug("run end")
 
-    def create_node(self, _plugin_name, _parent, name, **kwargs):
+    def create_node(
+        self, _plugin_name: str, _parent: Node, name: str, **kwargs
+    ) -> None:
         if name in self.nodes:
             _logger.warning(f"{name} is already registerd")
             return
@@ -47,21 +49,21 @@ class Flows(ABC):
     def __init__(self):
         self.flows: list[Flow | Flows] = []
 
-    def append(self, flow):
+    def append(self, flow: Flow):
         self.flows.append(flow)
 
-    def extend(self, flow):
+    def extend(self, flow: Flow):
         self.flows.extend(flow)
 
 
 class ConcurrentFlows(Flows):
-    async def run(self):
+    async def run(self) -> None:
         async with asyncio.TaskGroup() as tg:
             for task in self.flows:
                 tg.create_task(task.run())
 
 
 class SequentialFlows(Flows):
-    async def run(self):
+    async def run(self) -> None:
         for task in self.flows:
             await task.run()

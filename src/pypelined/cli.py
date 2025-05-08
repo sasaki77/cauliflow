@@ -11,7 +11,7 @@ from pypelined.plugin_manager import PluginManager
 _logger = get_logger(__name__)
 
 
-def init_logger(debug=False):
+def init_logger(debug: bool = False) -> None:
     logger = getLogger("pypelined")
     level = DEBUG if debug else WARNING
     logger.setLevel(level)

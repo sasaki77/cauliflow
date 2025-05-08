@@ -1,6 +1,6 @@
 from operator import contains
 
-from lark import Lark, Transformer, v_args
+from lark import Lark, ParseTree, Transformer, v_args
 
 from pypelined.context import ctx_blackboard, ctx_flowdata, ctx_macros
 
@@ -101,38 +101,38 @@ class OperatorTree(Transformer):
     integer = int
     slice = slice
 
-    def __init__(self, vars={}):
+    def __init__(self, vars: dict = {}):
         self.vars = vars
 
-    def string(self, s):
+    def string(self, s: str) -> str:
         return s[1:-1]
 
-    def none(self):
+    def none(self) -> None:
         return None
 
-    def true(self):
+    def true(self) -> bool:
         return True
 
-    def false(self):
+    def false(self) -> bool:
         return False
 
-    def list(self, *args):
+    def list(self, *args) -> list:
         return list(args)
 
-    def pair(self, key, value):
+    def pair(self, key, value) -> tuple:
         return (key, value)
 
-    def dict(self, *args):
+    def dict(self, *args) -> dict:
         return dict(args)
 
-    def assign_var(self, name, value):
+    def assign_var(self, name, value: any) -> any:
         self.vars[name] = value
         return value
 
-    def contains_(self, a, b):
+    def contains_(self, a: any, b: any) -> bool:
         return contains(b, a)
 
-    def var(self, name):
+    def var(self, name: str) -> any:
         try:
             return self.vars[name]
         except KeyError:
@@ -143,14 +143,14 @@ _parser = Lark(_grammar, start="expression", parser="lalr")
 
 
 class Variable:
-    def __init__(self, expression):
+    def __init__(self, expression: str):
         self.expression = expression
-        self.parse_tree = self.compile(expression)
+        self.parse_tree = self._compile(expression)
 
-    def compile(self, expression):
+    def _compile(self, expression: str) -> ParseTree:
         return _parser.parse(expression)
 
-    def fetch(self, extend: dict = {}):
+    def fetch(self, extend: dict = {}) -> any:
         bb = ctx_blackboard.get()
         fd = ctx_flowdata.get()
         mcr = ctx_macros.get()

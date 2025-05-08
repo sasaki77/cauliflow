@@ -10,14 +10,21 @@ _logger = get_logger(__name__)
 
 @node.register("for_list")
 class ForList(ProcessNode):
-    def __init__(self, name, lists: list, expression: str, filter=None, out_bb=False):
+    def __init__(
+        self,
+        name: str,
+        lists: list,
+        expression: str,
+        filter: str | None = None,
+        out_bb: bool = False,
+    ):
         super().__init__(name)
         self.variable = Variable(expression)
         self.lists = Variable(lists)
         self.filter = Variable(filter) if filter else None
         self.out_bb = out_bb
 
-    async def process(self):
+    async def process(self) -> None:
         lists = self.lists.fetch()
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.variable, var_dict)
@@ -27,14 +34,15 @@ class ForList(ProcessNode):
         else:
             fd = ctx_flowdata.get()
             fd[self.name] = items
-        return
 
     @singledispatchmethod
     def _for_loop(self, item, i: int, lists: list, variable: Variable, var_dict: dict):
         _logger.critical("lists must be list or dict")
 
     @_for_loop.register
-    def _(self, forlist: list, i: int, lists: list, variable: Variable, var_dict):
+    def _(
+        self, forlist: list, i: int, lists: list, variable: Variable, var_dict: dict
+    ) -> list:
         items = []
         for item in forlist:
             var_dict[f"item{i}"] = item
@@ -49,7 +57,9 @@ class ForList(ProcessNode):
         return items
 
     @_for_loop.register
-    def _(self, fordict: dict, i: int, lists: list, variable: Variable, var_dict):
+    def _(
+        self, fordict: dict, i: int, lists: list, variable: Variable, var_dict: dict
+    ) -> list:
         items = []
         for key, item in fordict.items():
             var_dict[f"item{i}_key"] = key
@@ -68,7 +78,13 @@ class ForList(ProcessNode):
 @node.register("for_dict")
 class ForDict(ProcessNode):
     def __init__(
-        self, name, lists: list, key: str, val: str, filter=None, out_bb=False
+        self,
+        name: str,
+        lists: list,
+        key: str,
+        val: str,
+        filter: str | None = None,
+        out_bb: bool = False,
     ):
         super().__init__(name)
         self.key = Variable(key)
@@ -77,7 +93,7 @@ class ForDict(ProcessNode):
         self.filter = Variable(filter) if filter else None
         self.out_bb = out_bb
 
-    async def process(self):
+    async def process(self) -> None:
         lists = self.lists.fetch()
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
@@ -87,7 +103,6 @@ class ForDict(ProcessNode):
         else:
             fd = ctx_flowdata.get()
             fd[self.name] = items
-        return
 
     @singledispatchmethod
     def _for_loop(
@@ -97,8 +112,14 @@ class ForDict(ProcessNode):
 
     @_for_loop.register
     def _(
-        self, forlist: list, i: int, lists: list, key: Variable, val: Variable, var_dict
-    ):
+        self,
+        forlist: list,
+        i: int,
+        lists: list,
+        key: Variable,
+        val: Variable,
+        var_dict: dict,
+    ) -> dict:
         items = {}
         for item in forlist:
             var_dict[f"item{i}"] = item
@@ -115,8 +136,14 @@ class ForDict(ProcessNode):
 
     @_for_loop.register
     def _(
-        self, fordict: dict, i: int, lists: list, key: Variable, val: Variable, var_dict
-    ):
+        self,
+        fordict: dict,
+        i: int,
+        lists: list,
+        key: Variable,
+        val: Variable,
+        var_dict: dict,
+    ) -> dict:
         items = {}
         for ikey, ival in fordict.items():
             var_dict[f"item{i}_key"] = ikey

@@ -8,12 +8,12 @@ from pypelined.variable import Variable
 
 @node.register("dict_keys")
 class DictKeysNode(ProcessNode):
-    def __init__(self, name, input, out_bb=False):
+    def __init__(self, name: str, input: str, out_bb: bool = False):
         super().__init__(name)
-        self.input: dict = Variable(input)
+        self.input = Variable(input)
         self.out_bb = out_bb
 
-    async def process(self):
+    async def process(self) -> None:
         dikt = self.input.fetch()
         out = list(dikt.keys())
         if self.out_bb:
@@ -22,17 +22,16 @@ class DictKeysNode(ProcessNode):
         else:
             fd = ctx_flowdata.get()
             fd[self.name] = out
-        return
 
 
 @node.register("dict_values")
 class DictValuesNode(ProcessNode):
-    def __init__(self, name, input, out_bb=False):
+    def __init__(self, name: str, input: str, out_bb: bool = False):
         super().__init__(name)
-        self.input: dict = Variable(input)
+        self.input = Variable(input)
         self.out_bb = out_bb
 
-    async def process(self):
+    async def process(self) -> None:
         dikt = self.input.fetch()
         out = list(dikt.values())
         if self.out_bb:
@@ -41,18 +40,17 @@ class DictValuesNode(ProcessNode):
         else:
             fd = ctx_flowdata.get()
             fd[self.name] = out
-        return
 
 
 @node.register("concat")
 class ConcatNode(ProcessNode):
-    def __init__(self, name, first, second, out_bb=False):
+    def __init__(self, name: str, first: str, second: str, out_bb: bool = False):
         super().__init__(name)
-        self.first: dict = Variable(first)
-        self.second: dict = Variable(second)
+        self.first = Variable(first)
+        self.second = Variable(second)
         self.out_bb = out_bb
 
-    async def process(self):
+    async def process(self) -> None:
         first = self.first.fetch()
         second = self.second.fetch()
         out = self._concat(first, second)
@@ -64,7 +62,7 @@ class ConcatNode(ProcessNode):
             fd[self.name] = out
         return
 
-    def _concat(self, first, second):
+    def _concat(self, first: Variable, second: Variable) -> str | list[str]:
         is_1st_list = isinstance(first, list)
         is_2nd_list = isinstance(second, list)
 
@@ -88,7 +86,7 @@ class ConcatNode(ProcessNode):
 class MutateNode(ProcessNode):
     def __init__(
         self,
-        name,
+        name: str,
         target: str = None,
         split: dict = {},
         copy: dict = {},
@@ -100,7 +98,7 @@ class MutateNode(ProcessNode):
         self.copy_dict = copy
         self.target = Variable(target)
 
-    async def process(self):
+    async def process(self) -> None:
         target = self.target.fetch()
         target = deepcopy(target)
         self.apply(target)
@@ -110,19 +108,18 @@ class MutateNode(ProcessNode):
         else:
             fd = ctx_flowdata.get()
             fd[self.name] = target
-        return
 
     @singledispatchmethod
-    def apply(self, target):
+    def apply(self, target: dict):
         self.copy(target)
         self.split(target)
 
     @apply.register
-    def _(self, targets: list):
+    def _(self, targets: list) -> None:
         for target in targets:
             self.apply(target)
 
-    def split(self, target):
+    def split(self, target) -> None:
         for field, parser in self.split_dict.items():
             target[field] = target[field].split(parser)
 

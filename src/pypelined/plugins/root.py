@@ -4,6 +4,5 @@ from pypelined.node import ProcessNode, node
 
 @node.register("root")
 class RootNode(ProcessNode):
-    async def process(self):
+    async def process(self) -> None:
         init_flowdata()
-        return
