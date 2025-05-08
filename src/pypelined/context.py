@@ -24,9 +24,9 @@ class ContextNode:
 ctx_macros = ContextVar("pypelined.ctx_macros", default=Macros())
 ctx_flowdata = ContextVar("pypelined.ctx_flowdata", default=FlowData())
 ctx_blackboard = ContextVar("pypelined.ctx_blackboard", default=BlackBoard())
-ctx_flows = ContextVar("pypelind.ct_flows", default=ContextFlows())
-ctx_flow = ContextVar("pypelind.ct_flow", default=ContextFlow())
-ctx_node = ContextVar("pypelind.ct_node", default=ContextNode())
+ctx_flows = ContextVar("pypelind.ctx_flows", default=ContextFlows())
+ctx_flow = ContextVar("pypelind.ctx_flow", default=ContextFlow())
+ctx_node = ContextVar("pypelind.ctx_node", default=ContextNode())
 
 
 def init_flowdata():
