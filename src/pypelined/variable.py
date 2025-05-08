@@ -154,7 +154,7 @@ class Variable:
         bb = ctx_blackboard.get()
         fd = ctx_flowdata.get()
         mcr = ctx_macros.get()
-        vars = {"bb": bb, "fd": fd, "macros": mcr}
+        vars = {"bb": bb, "fd": fd, "macro": mcr}
         vars.update(extend)
         transformer = OperatorTree(vars)
         result = transformer.transform(self.parse_tree)
