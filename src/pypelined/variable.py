@@ -5,6 +5,9 @@ from lark import Lark, ParseTree, Transformer, v_args
 from pypelined.context import ctx_blackboard, ctx_flowdata, ctx_macros
 
 _grammar = """
+    start: (text | expression_wrapper)*
+    text: /[^{}]+/
+    expression_wrapper: "{{" expression "}}"
     ?expression: disjunction
         | NAME "=" disjunction    -> assign_var
 
@@ -25,6 +28,7 @@ _grammar = """
         | comparison ">=" sum       -> ge
         | comparison "<=" sum       -> le
         | comparison "in" sum       -> contains_
+        | comparison "not in" sum   -> not_contains
         | comparison "is" sum       -> is_
         | comparison "is not" sum   -> is_not
 
@@ -104,6 +108,11 @@ class OperatorTree(Transformer):
     def __init__(self, vars: dict = {}):
         self.vars = vars
 
+    def start(self, *args) -> str:
+        if len(args) > 1:
+            return "".join(args)
+        return args[0]
+
     def string(self, s: str) -> str:
         return s[1:-1]
 
@@ -125,12 +134,21 @@ class OperatorTree(Transformer):
     def dict(self, *args) -> dict:
         return dict(args)
 
+    def text(self, string) -> str:
+        return str(string)
+
+    def expression_wrapper(self, expression) -> any:
+        return expression
+
     def assign_var(self, name, value: any) -> any:
         self.vars[name] = value
         return value
 
     def contains_(self, a: any, b: any) -> bool:
         return contains(b, a)
+
+    def not_contains(self, a: any, b: any) -> bool:
+        return not contains(b, a)
 
     def var(self, name: str) -> any:
         try:
@@ -139,18 +157,23 @@ class OperatorTree(Transformer):
             raise Exception("Variable not found: %s" % name)
 
 
-_parser = Lark(_grammar, start="expression", parser="lalr")
+_parser = Lark(_grammar, start="start", parser="lalr")
 
 
 class Variable:
-    def __init__(self, expression: str):
+    def __init__(self, expression: any):
         self.expression = expression
-        self.parse_tree = self._compile(expression)
+        self.parse_tree = None
+        if isinstance(expression, str):
+            self.parse_tree = self._compile(expression)
 
     def _compile(self, expression: str) -> ParseTree:
         return _parser.parse(expression)
 
     def fetch(self, extend: dict = {}) -> any:
+        if self.parse_tree is None:
+            return self.expression
+
         bb = ctx_blackboard.get()
         fd = ctx_flowdata.get()
         mcr = ctx_macros.get()
