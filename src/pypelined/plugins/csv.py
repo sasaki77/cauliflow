@@ -5,6 +5,7 @@ from pathlib import Path
 from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.logging import get_logger
 from pypelined.node import ProcessNode, node
+from pypelined.variable import Variable
 
 _logger = get_logger(__name__)
 
@@ -26,12 +27,13 @@ class InputCSVNode(ProcessNode):
         format: DataFormat = DataFormat.KEYVALUE,
     ):
         super().__init__(name)
-        self.path = Path(path)
+        self.path = Variable(path)
         self.out_bb = out_bb
         self.format = format
 
     async def process(self):
-        csvdata = self.get_csvdata()
+        path = self.path.fetch()
+        csvdata = self.get_csvdata(Path(path))
         _bb = ctx_blackboard.get()
         if self.out_bb:
             _bb[self.name] = csvdata
@@ -41,8 +43,8 @@ class InputCSVNode(ProcessNode):
 
         return
 
-    def get_csvdata(self):
-        with self.path.open(newline="") as csvfile:
+    def get_csvdata(self, path: Path):
+        with path.open(newline="") as csvfile:
             if self.format == DataFormat.DICT:
                 reader = csv.DictReader(csvfile, skipinitialspace=True)
                 dictlist = [row for row in reader]
