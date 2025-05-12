@@ -16,7 +16,7 @@ class CamonitorNode(TriggerNode):
 
     def set_argument_spec(self):
         return {
-            "pvname": {"type": "list", "required": True},
+            "pvname": {"type": "any", "required": True},
         }
 
     def onChanges(self, pvname=None, value=None, char_value=None, **kw):
@@ -44,6 +44,11 @@ class CagetNode(ProcessNode):
         super().__init__(name, param_dict)
         self.q = janus.Queue()
         self.pvs: list[epics.PV] | epics.PV = None
+
+    def set_argument_spec(self):
+        return {
+            "pvname": {"type": "any", "required": True},
+        }
 
     async def process(self):
         if self.pvs is None:

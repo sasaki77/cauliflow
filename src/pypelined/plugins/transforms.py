@@ -10,7 +10,7 @@ from pypelined.variable import Variable
 class DictKeysNode(ProcessNode):
     def set_argument_spec(self):
         return {
-            "input": {"type": "str", "required": True},
+            "input": {"type": "dict", "required": True},
             "out_bb": {"type": "bool", "required": False, "default": False},
         }
 
@@ -31,7 +31,7 @@ class DictKeysNode(ProcessNode):
 class DictValuesNode(ProcessNode):
     def set_argument_spec(self):
         return {
-            "input": {"type": "str", "required": True},
+            "input": {"type": "dict", "required": True},
             "out_bb": {"type": "bool", "required": False, "default": False},
         }
 
@@ -52,8 +52,8 @@ class DictValuesNode(ProcessNode):
 class ConcatNode(ProcessNode):
     def set_argument_spec(self):
         return {
-            "first": {"type": "str", "required": True},
-            "second": {"type": "str", "required": True},
+            "first": {"type": "any", "required": True},
+            "second": {"type": "any", "required": True},
             "out_bb": {"type": "bool", "required": False, "default": False},
         }
 
@@ -95,7 +95,7 @@ class ConcatNode(ProcessNode):
 class MutateNode(ProcessNode):
     def set_argument_spec(self):
         return {
-            "target": {"type": "str", "required": True},
+            "target": {"type": "any", "required": True},
             "split_dict": {"type": "dict", "required": False, "default": {}},
             "copy_dict": {"type": "dict", "required": False, "default": {}},
             "out_bb": {"type": "bool", "required": False, "default": False},

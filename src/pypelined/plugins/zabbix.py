@@ -16,8 +16,8 @@ class ZabbixGetItemNode(ProcessNode):
             "url": {"type": "str", "required": False, "default": "localhost"},
             "user": {"type": "str", "required": False, "default": "root"},
             "password": {"type": "str", "required": False, "default": "Zabbix"},
-            "filter": {"type": "str", "required": False, "default": None},
-            "output": {"type": "str", "required": False, "default": None},
+            "filter": {"type": "dict", "required": False, "default": None},
+            "output": {"type": "list", "required": False, "default": None},
         }
 
     async def process(self) -> None:

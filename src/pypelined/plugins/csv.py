@@ -19,9 +19,9 @@ class DataFormat(StrEnum):
 class InputCSVNode(ProcessNode):
     def set_argument_spec(self):
         return {
-            "path": {"type": "str", "required": True},
+            "path": {"type": "path", "required": True},
             "out_bb": {"type": "bool", "required": False, "default": False},
-            "format": {"type": "bool", "required": False, "default": "key_value"},
+            "format": {"type": "str", "required": False, "default": "key_value"},
         }
 
     async def process(self) -> None:

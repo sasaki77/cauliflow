@@ -8,7 +8,7 @@ from pypelined.node import ProcessNode, node
 class OutNode(ProcessNode):
     def set_argument_spec(self):
         return {
-            "src": {"type": "str", "required": False, "default": None},
+            "src": {"type": "any", "required": False, "default": None},
             "pretty": {"type": "bool", "required": False, "default": False},
         }
 
