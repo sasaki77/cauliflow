@@ -5,7 +5,6 @@ from pathlib import Path
 from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.logging import get_logger
 from pypelined.node import ProcessNode, node
-from pypelined.variable import Variable
 
 _logger = get_logger(__name__)
 
@@ -18,45 +17,43 @@ class DataFormat(StrEnum):
 
 @node.register("input_csv")
 class InputCSVNode(ProcessNode):
-    def __init__(
-        self,
-        name: str,
-        path: str,
-        out_bb: bool = False,
-        skip_header: bool = False,
-        format: str | DataFormat = DataFormat.KEYVALUE,
-    ):
-        super().__init__(name)
-        self.path = Variable(path)
-        self.out_bb = out_bb
-        self.format = format
+    def set_argument_spec(self):
+        return {
+            "path": {"type": "str", "required": True},
+            "out_bb": {"type": "bool", "required": False, "default": False},
+            "format": {"type": "bool", "required": False, "default": "key_value"},
+        }
 
     async def process(self) -> None:
-        path = self.path.fetch()
-        csvdata = self.get_csvdata(Path(path))
-        _bb = ctx_blackboard.get()
-        if self.out_bb:
+        path = self.params["path"]
+        format = self.params["format"]
+
+        csvdata = self.get_csvdata(Path(path), format)
+
+        outbb = self.params["out_bb"]
+        if outbb:
+            _bb = ctx_blackboard.get()
             _bb[self.name] = csvdata
         else:
             fd = ctx_flowdata.get()
             fd[self.name] = csvdata
 
-    def get_csvdata(self, path: Path) -> None:
+    def get_csvdata(self, path: Path, format: str | DataFormat) -> None:
         with path.open(newline="") as csvfile:
-            if self.format == DataFormat.DICT:
+            if format == DataFormat.DICT:
                 reader = csv.DictReader(csvfile, skipinitialspace=True)
                 dictlist = [row for row in reader]
                 return dictlist
 
             reader = csv.reader(csvfile, skipinitialspace=True)
-            if self.format == DataFormat.ARRAY:
+            if format == DataFormat.ARRAY:
                 csvdata = [row for row in reader]
                 return csvdata
 
-            if self.format == DataFormat.KEYVALUE:
+            if format == DataFormat.KEYVALUE:
                 csvdata = {}
                 for row in reader:
                     csvdata[row[0]] = row[1]
                 return csvdata
 
-            _logger.warning(f"format:{self.format} is not matched")
+            _logger.warning(f"format:{format} is not matched")

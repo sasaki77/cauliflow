@@ -2,21 +2,23 @@ from pprint import pprint
 
 from pypelined.context import ctx_flowdata
 from pypelined.node import ProcessNode, node
-from pypelined.variable import Variable
 
 
 @node.register("stdout")
 class OutNode(ProcessNode):
-    def __init__(self, name: str, src: str | None = None, pretty: bool = False):
-        super().__init__(name)
-        self.src = src if src is None else Variable(src)
-        self.print_func = pprint if pretty else print
+    def set_argument_spec(self):
+        return {
+            "src": {"type": "str", "required": False, "default": None},
+            "pretty": {"type": "bool", "required": False, "default": False},
+        }
 
     async def process(self) -> None:
-        if self.src is None:
+        print_func = pprint if self.params["pretty"] else print
+        src = self.params["src"]
+
+        if src is None:
             fd = ctx_flowdata.get()
-            self.print_func(fd)
+            print_func(fd)
             return
 
-        out = self.src.fetch()
-        self.print_func(out)
+        print_func(src)

@@ -85,13 +85,15 @@ def _make_flow(config: dict) -> Flow:
             _logger.error("node read error")
         for node_type, params in node.items():
             parent = prev_node
-            if "name" not in params:
-                params["name"] = node_type
+            name = node_type
+            if "name" in params:
+                name = params["name"]
+                del params["name"]
             if "parent" in params:
                 parent = params["parent"]
                 del params["parent"]
-            flow.create_node(node_type, _parent=parent, **params)
-            prev_node = params["name"]
+            flow.create_node(node_type, _parent=parent, name=name, param_dict=params)
+            prev_node = name
     return flow
 
 

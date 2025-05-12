@@ -10,25 +10,31 @@ _logger = get_logger(__name__)
 
 @node.register("for_list")
 class ForList(ProcessNode):
-    def __init__(
-        self,
-        name: str,
-        lists: list,
-        expression: str,
-        filter: str | None = None,
-        out_bb: bool = False,
-    ):
-        super().__init__(name)
-        self.variable = Variable(expression)
-        self.lists = Variable(lists)
-        self.filter = Variable(filter) if filter else None
-        self.out_bb = out_bb
+    def __init__(self, name: str, param_dict: dict):
+        super().__init__(name, param_dict)
+        self.variable = None
+        self.filter = None
+
+    def set_argument_spec(self):
+        return {
+            "lists": {"type": "list", "required": True},
+            "expression": {"type": "str", "required": True},
+            "filter": {"type": "str", "required": False, "default": None},
+            "out_bb": {"type": "str", "required": False, "default": False},
+        }
 
     async def process(self) -> None:
-        lists = self.lists.fetch()
+        if self.variable is None:
+            self.variable = Variable(self.params["expression"])
+        if self.filter is None:
+            self.filter = Variable(self.params["filter"])
+
+        lists = self.params["lists"]
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.variable, var_dict)
-        if self.out_bb:
+
+        outbb = self.params["out_bb"]
+        if outbb:
             _bb = ctx_blackboard.get()
             _bb[self.name] = items
         else:
@@ -77,24 +83,30 @@ class ForList(ProcessNode):
 
 @node.register("for_dict")
 class ForDict(ProcessNode):
-    def __init__(
-        self,
-        name: str,
-        lists: list,
-        key: str,
-        val: str,
-        filter: str | None = None,
-        out_bb: bool = False,
-    ):
-        super().__init__(name)
-        self.key = Variable(key)
-        self.val = Variable(val)
-        self.lists = Variable(lists)
-        self.filter = Variable(filter) if filter else None
-        self.out_bb = out_bb
+    def __init__(self, name: str, param_dict: dict):
+        super().__init__(name, param_dict)
+        self.key = None
+        self.val = None
+        self.filter = None
+
+    def set_argument_spec(self):
+        return {
+            "lists": {"type": "list", "required": True},
+            "key": {"type": "str", "required": True},
+            "val": {"type": "str", "required": True},
+            "filter": {"type": "str", "required": False, "default": None},
+            "out_bb": {"type": "str", "required": False, "default": False},
+        }
 
     async def process(self) -> None:
-        lists = self.lists.fetch()
+        if self.key is None:
+            self.key = Variable(self.params["key"])
+        if self.val is None:
+            self.val = Variable(self.params["val"])
+        if self.filter is None:
+            self.filter = Variable(self.params["filter"])
+
+        lists = self.params["lists"]
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
         if self.out_bb:

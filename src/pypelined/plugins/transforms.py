@@ -8,15 +8,18 @@ from pypelined.variable import Variable
 
 @node.register("dict_keys")
 class DictKeysNode(ProcessNode):
-    def __init__(self, name: str, input: str, out_bb: bool = False):
-        super().__init__(name)
-        self.input = Variable(input)
-        self.out_bb = out_bb
+    def set_argument_spec(self):
+        return {
+            "input": {"type": "str", "required": True},
+            "out_bb": {"type": "bool", "required": False, "default": False},
+        }
 
     async def process(self) -> None:
-        dikt = self.input.fetch()
-        out = list(dikt.keys())
-        if self.out_bb:
+        input = self.params["input"]
+        out = list(input.keys())
+
+        outbb = self.params["out_bb"]
+        if outbb:
             _bb = ctx_blackboard.get()
             _bb[self.name] = out
         else:
@@ -26,15 +29,18 @@ class DictKeysNode(ProcessNode):
 
 @node.register("dict_values")
 class DictValuesNode(ProcessNode):
-    def __init__(self, name: str, input: str, out_bb: bool = False):
-        super().__init__(name)
-        self.input = Variable(input)
-        self.out_bb = out_bb
+    def set_argument_spec(self):
+        return {
+            "input": {"type": "str", "required": True},
+            "out_bb": {"type": "bool", "required": False, "default": False},
+        }
 
     async def process(self) -> None:
-        dikt = self.input.fetch()
-        out = list(dikt.values())
-        if self.out_bb:
+        input = self.params["input"]
+        out = list(input.values())
+
+        outbb = self.params["out_bb"]
+        if outbb:
             _bb = ctx_blackboard.get()
             _bb[self.name] = out
         else:
@@ -44,17 +50,20 @@ class DictValuesNode(ProcessNode):
 
 @node.register("concat")
 class ConcatNode(ProcessNode):
-    def __init__(self, name: str, first: str, second: str, out_bb: bool = False):
-        super().__init__(name)
-        self.first = Variable(first)
-        self.second = Variable(second)
-        self.out_bb = out_bb
+    def set_argument_spec(self):
+        return {
+            "first": {"type": "str", "required": True},
+            "second": {"type": "str", "required": True},
+            "out_bb": {"type": "bool", "required": False, "default": False},
+        }
 
     async def process(self) -> None:
-        first = self.first.fetch()
-        second = self.second.fetch()
+        first = self.params["first"]
+        second = self.params["second"]
         out = self._concat(first, second)
-        if self.out_bb:
+
+        outbb = self.params["out_bb"]
+        if outbb:
             _bb = ctx_blackboard.get()
             _bb[self.name] = out
         else:
@@ -84,22 +93,16 @@ class ConcatNode(ProcessNode):
 
 @node.register("mutate")
 class MutateNode(ProcessNode):
-    def __init__(
-        self,
-        name: str,
-        target: str = None,
-        split: dict = {},
-        copy: dict = {},
-        out_bb: bool = False,
-    ):
-        super().__init__(name)
-        self.out_bb = out_bb
-        self.split_dict = split
-        self.copy_dict = copy
-        self.target = Variable(target)
+    def set_argument_spec(self):
+        return {
+            "target": {"type": "str", "required": True},
+            "split_dict": {"type": "dict", "required": False, "default": {}},
+            "copy_dict": {"type": "dict", "required": False, "default": {}},
+            "out_bb": {"type": "bool", "required": False, "default": False},
+        }
 
     async def process(self) -> None:
-        target = self.target.fetch()
+        target = self.params["target"]
         target = deepcopy(target)
         self.apply(target)
         if self.out_bb:
@@ -120,9 +123,11 @@ class MutateNode(ProcessNode):
             self.apply(target)
 
     def split(self, target) -> None:
-        for field, parser in self.split_dict.items():
+        split_dict = self.params["split_dict"]
+        for field, parser in split_dict.items():
             target[field] = target[field].split(parser)
 
     def copy(self, target):
-        for src, dst in self.copy_dict.items():
+        copy_dict = self.params["copy_dict"]
+        for src, dst in copy_dict.items():
             target[dst] = deepcopy(target[src])

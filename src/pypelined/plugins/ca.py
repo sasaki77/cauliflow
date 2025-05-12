@@ -5,25 +5,26 @@ import janus
 
 from pypelined.context import ctx_flowdata, init_flowdata
 from pypelined.node import ProcessNode, TriggerNode, node
-from pypelined.variable import Variable
 
 
 @node.register("camonitor")
 class CamonitorNode(TriggerNode):
-    def __init__(self, name, pvname):
-        super().__init__(name)
+    def __init__(self, name: str, param_dict: dict):
+        super().__init__(name, param_dict)
         self.q = janus.Queue()
-        self.pvnames = Variable(pvname)
         self.pvs = []
+
+    def set_argument_spec(self):
+        return {
+            "pvname": {"type": "list", "required": True},
+        }
 
     def onChanges(self, pvname=None, value=None, char_value=None, **kw):
         data = {"pv": {"name": pvname, "value": char_value}}
         self.q.sync_q.put(data)
 
     async def process(self):
-        fd = ctx_flowdata.get()
-        pvnames = self.pvnames.fetch(fd)
-        pvnames = _get_pvnames(pvnames)
+        pvnames = self.params["pvname"]
 
         for pvname in pvnames:
             pv = epics.get_pv(pvname, callback=self.onChanges)
@@ -39,14 +40,14 @@ class CamonitorNode(TriggerNode):
 
 @node.register("caget")
 class CagetNode(ProcessNode):
-    def __init__(self, name, pvname):
-        super().__init__(name)
-        self.pvnames = Variable(pvname)
+    def __init__(self, name: str, param_dict: dict):
+        super().__init__(name, param_dict)
+        self.q = janus.Queue()
         self.pvs: list[epics.PV] | epics.PV = None
 
     async def process(self):
         if self.pvs is None:
-            pvnames = self.pvnames.fetch()
+            pvnames = self.params["pvname"]
             pvnames = _get_pvnames(pvnames)
 
             self.pvs = []
@@ -70,5 +71,4 @@ def _get_pvnames(obj):
 
 @_get_pvnames.register(str)
 def _(string):
-    print("str")
     return [string]

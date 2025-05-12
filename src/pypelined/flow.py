@@ -18,7 +18,7 @@ class Flow:
     def __init__(self, name: str | None = None):
         self.blackboard = ctx_blackboard.get()
         self.name = name
-        self.root: Node = node.create("root", name="root")
+        self.root: Node = node.create("root", name="root", param_dict={})
         self.nodes = {}
         self.nodes["root"] = self.root
 
@@ -30,13 +30,13 @@ class Flow:
         _logger.debug("run end")
 
     def create_node(
-        self, _plugin_name: str, _parent: Node, name: str, **kwargs
+        self, _plugin_name: str, _parent: Node, name: str, param_dict: dict
     ) -> None:
         if name in self.nodes:
             _logger.warning(f"{name} is already registerd")
             return
 
-        self.nodes[name] = node.create(_plugin_name, name=name, **kwargs)
+        self.nodes[name] = node.create(_plugin_name, name=name, param_dict=param_dict)
 
         if _parent:
             self.nodes[_parent].add_child(self.nodes[name])
