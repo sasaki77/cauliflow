@@ -1,6 +1,6 @@
 from operator import contains
 
-from lark import Lark, ParseTree, Transformer, v_args
+from lark import Lark, ParseTree, Transformer, Tree, v_args
 
 from pypelined.context import ctx_blackboard, ctx_flowdata, ctx_macros
 
@@ -159,8 +159,16 @@ class Variable:
     def __init__(self, expression: any):
         self.expression = expression
         self.parse_tree = None
+        self.val = None
+        self.has_var = None
+
         if isinstance(expression, str):
             self.parse_tree = self._compile(expression)
+            self.has_var = self._find_var(self.parse_tree)
+
+        if not self.has_var:
+            transformer = OperatorTree({})
+            self.val = transformer.transform(self.parse_tree)
 
     def _compile(self, expression: str) -> ParseTree:
         return _parser.parse(expression)
@@ -168,6 +176,9 @@ class Variable:
     def fetch(self, extend: dict = {}) -> any:
         if self.parse_tree is None:
             return self.expression
+
+        if not self.has_var:
+            return self.val
 
         bb = ctx_blackboard.get()
         fd = ctx_flowdata.get()
@@ -177,3 +188,9 @@ class Variable:
         transformer = OperatorTree(vars)
         result = transformer.transform(self.parse_tree)
         return result
+
+    def _find_var(self, tree: Tree):
+        for subtree in tree.iter_subtrees():
+            if subtree.data == "var":
+                return True
+        return False
