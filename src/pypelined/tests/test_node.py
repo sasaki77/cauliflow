@@ -3,7 +3,7 @@ import pytest
 from pypelined.node import ArgumentSpec, Node
 
 
-class TestNode(Node):
+class NodeTest(Node):
     async def process(self) -> None:
         pass
 
@@ -28,7 +28,7 @@ class TestNode(Node):
         }
 
 
-class TestWoDefaultNode(Node):
+class NodeTestWoDefault(Node):
     async def process(self) -> None:
         pass
 
@@ -46,7 +46,7 @@ async def test_node_with_positive_args():
         "not_required_bool": True,
         "not_required_float": 2.2,
     }
-    node = TestNode(name="msg", param_dict=args)
+    node = NodeTest(name="msg", param_dict=args)
     await node.run()
     assert node.params["required_str"] == "foo"
     assert node.params["not_required_str"] == "bar"
@@ -59,7 +59,7 @@ async def test_node_without_default():
     args = {
         "required_str": "foo",
     }
-    node = TestNode(name="msg", param_dict=args)
+    node = NodeTest(name="msg", param_dict=args)
     await node.run()
     assert node.params["required_str"] == "foo"
     assert node.params["not_required_str"] == "default"
@@ -71,7 +71,7 @@ async def test_node_without_default():
 async def test_node_without_required():
     with pytest.raises(TypeError) as err:
         args = {}
-        node = TestNode(name="msg", param_dict=args)
+        node = NodeTest(name="msg", param_dict=args)
         await node.run()
     assert "missing parameter required by" in str(err.value)
 
@@ -80,6 +80,6 @@ async def test_node_without_required():
 async def test_node_wo_default():
     with pytest.raises(TypeError) as err:
         args = {}
-        node = TestWoDefaultNode(name="msg", param_dict=args)
+        node = NodeTestWoDefault(name="msg", param_dict=args)
         await node.run()
     assert "default value is not specified" in str(err.value)
