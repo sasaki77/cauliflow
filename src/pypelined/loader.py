@@ -21,7 +21,9 @@ def flow_from_yaml(file_path: str | Path) -> Flows:
 
     is_seq = FlowsType.SEQUENCTIAL in yaml_dict
     is_con = FlowsType.CONCURRENT in yaml_dict
-    if is_seq and is_con:
+    is_onlyflow = "flow" in yaml_dict
+
+    if (is_seq + is_con + is_onlyflow) > 1:
         _logger.error("multiple flows are detected")
 
     flows = None
@@ -29,6 +31,9 @@ def flow_from_yaml(file_path: str | Path) -> Flows:
         flows = _make_seq(yaml_dict[FlowsType.SEQUENCTIAL])
     elif is_con:
         flows = _make_con(yaml_dict[FlowsType.CONCURRENT])
+    elif is_onlyflow:
+        flow_dict = {"flows": [yaml_dict]}
+        flows = _make_seq(flow_dict)
     else:
         _logger.error("flows not defined")
 
@@ -40,16 +45,16 @@ def flow_from_yaml(file_path: str | Path) -> Flows:
     return flows
 
 
-def _make_flows(flows: dict) -> Flows:
+def _make_flows(flows: dict) -> list[Flows | Flow]:
     flow_list = []
     for flow in flows:
         new_flow = None
         if "flow" in flow:
             new_flow = _make_flow(flow)
         elif FlowsType.SEQUENCTIAL in flow:
-            new_flow = _make_seq(flow)
+            new_flow = _make_seq(flow[FlowsType.SEQUENCTIAL])
         elif FlowsType.CONCURRENT in flow:
-            new_flow = _make_con(flow)
+            new_flow = _make_con(flow[FlowsType.CONCURRENT])
         else:
             continue
         flow_list.append(new_flow)
