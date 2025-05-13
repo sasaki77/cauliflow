@@ -25,9 +25,9 @@ class ForList(ProcessNode):
 
     async def process(self) -> None:
         if self.variable is None:
-            self.variable = Variable(self.params["expression"])
-        if self.filter is None:
-            self.filter = Variable(self.params["filter"])
+            self.variable = Variable("{{" + self.params["expression"] + "}}")
+        if self.filter is None and self.params["filter"] is not None:
+            self.filter = Variable("{{" + self.params["filter"] + "}}")
 
         lists = self.params["lists"]
         var_dict = {}
@@ -60,6 +60,7 @@ class ForList(ProcessNode):
                     continue
                 ret = variable.fetch(extend=var_dict)
                 items.append(ret)
+        print(items)
         return items
 
     @_for_loop.register
@@ -100,16 +101,17 @@ class ForDict(ProcessNode):
 
     async def process(self) -> None:
         if self.key is None:
-            self.key = Variable(self.params["key"])
+            self.key = Variable("{{" + self.params["key"] + "}}")
         if self.val is None:
-            self.val = Variable(self.params["val"])
-        if self.filter is None:
-            self.filter = Variable(self.params["filter"])
+            self.val = Variable("{{" + self.params["val"] + "}}")
+        if self.filter is None and self.params["filter"] is not None:
+            self.filter = Variable("{{" + self.params["filter"] + "}}")
 
         lists = self.params["lists"]
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
-        if self.out_bb:
+        outbb = self.params["out_bb"]
+        if outbb:
             _bb = ctx_blackboard.get()
             _bb[self.name] = items
         else:
