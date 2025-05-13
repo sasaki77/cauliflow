@@ -1,0 +1,13 @@
+---
+flow:
+  - test.addnode:
+      name: "add1"
+      a: "{{ macro['init_val'] }}"
+      b: 1
+  - test.addnode:
+      name: "add2"
+      a: "{{ fd['add1'] }}"
+      b: 1
+      out_bb: True
+macros:
+  init_val: 10

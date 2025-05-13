@@ -1,0 +1,18 @@
+---
+sequential:
+  flows:
+    - name: "flow1"
+      flow:
+        - test.addnode:
+            name: "add1"
+            a: "{{ macro['init_val'] }}"
+            b: 1
+            out_bb: True
+    - name: "flow2"
+      flow:
+        - test.addnode:
+            name: "add2"
+            a: "{{ bb['add1'] }}"
+            b: 1
+macros:
+  init_val: 10

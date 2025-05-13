@@ -1,0 +1,20 @@
+---
+concurrent:
+  flows:
+    - name: "flow1"
+      flow:
+        - test.addnode:
+            name: "add1"
+            a: "{{ macro['init_val1'] }}"
+            b: 1
+            out_bb: True
+    - name: "flow2"
+      flow:
+        - test.addnode:
+            name: "add2"
+            a: "{{ macro['init_val2'] }}"
+            b: 1
+            out_bb: True
+macros:
+  init_val1: 10
+  init_val2: 20
