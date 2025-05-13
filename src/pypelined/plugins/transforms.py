@@ -96,8 +96,8 @@ class MutateNode(ProcessNode):
     def set_argument_spec(self):
         return {
             "target": {"type": "any", "required": True},
-            "split_dict": {"type": "dict", "required": False, "default": {}},
-            "copy_dict": {"type": "dict", "required": False, "default": {}},
+            "split": {"type": "dict", "required": False, "default": {}},
+            "copy": {"type": "dict", "required": False, "default": {}},
             "out_bb": {"type": "bool", "required": False, "default": False},
         }
 
@@ -105,7 +105,8 @@ class MutateNode(ProcessNode):
         target = self.params["target"]
         target = deepcopy(target)
         self.apply(target)
-        if self.out_bb:
+        outbb = self.params["out_bb"]
+        if outbb:
             _bb = ctx_blackboard.get()
             _bb[self.name] = target
         else:
@@ -123,11 +124,11 @@ class MutateNode(ProcessNode):
             self.apply(target)
 
     def split(self, target) -> None:
-        split_dict = self.params["split_dict"]
+        split_dict = self.params["split"]
         for field, parser in split_dict.items():
             target[field] = target[field].split(parser)
 
     def copy(self, target):
-        copy_dict = self.params["copy_dict"]
+        copy_dict = self.params["copy"]
         for src, dst in copy_dict.items():
             target[dst] = deepcopy(target[src])
