@@ -1,6 +1,9 @@
 import pytest
 
-from pypelined.context import ctx_blackboard, ctx_flowdata
+from pypelined.blackboard import BlackBoard
+from pypelined.context import ctx_blackboard, ctx_flowdata, ctx_macros
+from pypelined.flowdata import FlowData
+from pypelined.macros import Macros
 from pypelined.node import ArgumentSpec, Node, node
 from pypelined.plugin_manager import PluginManager
 
@@ -23,6 +26,17 @@ class AddNode(Node):
             "b": {"type": "int", "required": True},
             "out_bb": {"type": "bool", "required": False, "default": False},
         }
+
+
+@pytest.fixture
+def init_context_vars():
+    bb = BlackBoard()
+    fd = FlowData()
+    macros = Macros()
+
+    ctx_blackboard.set(bb)
+    ctx_flowdata.set(fd)
+    ctx_macros.set(macros)
 
 
 @pytest.fixture(scope="module")
