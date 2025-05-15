@@ -25,4 +25,15 @@ build-backend = "hatchling.build"
 dev = [
     "pytest>=8.3.5",
     "pytest-asyncio>=0.26.0",
+    "tox>=4.26.0",
+    "tox-uv>=1.25.0",
 ]
+
+[tool.tox]
+requires = ["tox>=4.19"]
+env_list = ["3.13", "3.12", "3.11"]
+
+[tool.tox.env_run_base]
+description = "Run test under {base_python}"
+deps = ["pytest>=8", "pytest-asyncio"]
+commands = [["pytest"]]
