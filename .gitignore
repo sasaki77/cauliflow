@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Unit test
+.tox
+.pytest_cache/
