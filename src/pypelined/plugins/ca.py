@@ -4,7 +4,7 @@ import epics
 import janus
 
 from pypelined.context import ctx_flowdata, init_flowdata
-from pypelined.node import ProcessNode, TriggerNode, node
+from pypelined.node import ArgumentSpec, ProcessNode, TriggerNode, node
 
 
 @node.register("camonitor")
@@ -14,7 +14,7 @@ class CamonitorNode(TriggerNode):
         self.q = janus.Queue()
         self.pvs = []
 
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "pvname": {"type": "any", "required": True},
         }
@@ -35,6 +35,8 @@ class CamonitorNode(TriggerNode):
             init_flowdata()
             d = ctx_flowdata.get()
             d[self.name] = pvdata
+            if self.child is None:
+                continue
             await self.child.run()
 
 
@@ -43,9 +45,9 @@ class CagetNode(ProcessNode):
     def __init__(self, name: str, param_dict: dict):
         super().__init__(name, param_dict)
         self.q = janus.Queue()
-        self.pvs: list[epics.PV] | epics.PV = None
+        self.pvs: list[epics.PV] | None = None
 
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "pvname": {"type": "any", "required": True},
         }

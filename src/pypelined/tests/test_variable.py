@@ -21,6 +21,7 @@ def context_vars():
 @pytest.mark.parametrize(
     "input,expected",
     [
+        ("", ""),
         ("''", "''"),
         ("{{ -1 }}", -1),
         ("This is a test.", "This is a test."),

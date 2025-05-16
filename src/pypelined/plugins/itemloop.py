@@ -2,7 +2,7 @@ from functools import singledispatchmethod
 
 from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.logging import get_logger
-from pypelined.node import ProcessNode, node
+from pypelined.node import ArgumentSpec, ProcessNode, node
 from pypelined.variable import Variable
 
 _logger = get_logger(__name__)
@@ -15,7 +15,7 @@ class ForList(ProcessNode):
         self.variable = None
         self.filter = None
 
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "lists": {"type": "list", "required": True},
             "expression": {"type": "str", "required": True},
@@ -42,8 +42,11 @@ class ForList(ProcessNode):
             fd[self.name] = items
 
     @singledispatchmethod
-    def _for_loop(self, item, i: int, lists: list, variable: Variable, var_dict: dict):
+    def _for_loop(
+        self, item, i: int, lists: list, variable: Variable, var_dict: dict
+    ) -> list:
         _logger.critical("lists must be list or dict")
+        return []
 
     @_for_loop.register
     def _(
@@ -90,7 +93,7 @@ class ForDict(ProcessNode):
         self.val = None
         self.filter = None
 
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "lists": {"type": "list", "required": True},
             "key": {"type": "str", "required": True},
@@ -121,8 +124,9 @@ class ForDict(ProcessNode):
     @singledispatchmethod
     def _for_loop(
         self, item, i: int, lists: list, key: Variable, val: Variable, var_dict: dict
-    ):
+    ) -> dict:
         _logger.critical("lists must be list or dict")
+        return {}
 
     @_for_loop.register
     def _(

@@ -30,7 +30,7 @@ class Flow:
         _logger.debug("run end")
 
     def create_node(
-        self, _plugin_name: str, _parent: Node, name: str, param_dict: dict
+        self, _plugin_name: str, _parent: str, name: str, param_dict: dict
     ) -> None:
         if name in self.nodes:
             _logger.warning(f"{name} is already registerd")
@@ -49,10 +49,10 @@ class Flows(ABC):
     def __init__(self):
         self.flows: list[Flow | Flows] = []
 
-    def append(self, flow: Flow):
+    def append(self, flow: "Flow | Flows"):
         self.flows.append(flow)
 
-    def extend(self, flow: Flow):
+    def extend(self, flow: list["Flow | Flows"]):
         self.flows.extend(flow)
 
 

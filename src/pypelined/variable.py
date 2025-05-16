@@ -1,4 +1,5 @@
 from operator import contains
+from typing import Any
 
 from lark import Lark, ParseTree, Transformer, Tree, v_args
 
@@ -110,6 +111,8 @@ class OperatorTree(Transformer):
     def start(self, *args) -> str:
         if len(args) > 1:
             return "".join(args)
+        if len(args) < 1:
+            return ""
         return args[0]
 
     def string(self, s: str) -> str:
@@ -136,16 +139,16 @@ class OperatorTree(Transformer):
     def text(self, string) -> str:
         return str(string)
 
-    def expression_wrapper(self, expression) -> any:
+    def expression_wrapper(self, expression) -> Any:
         return expression
 
-    def contains_(self, a: any, b: any) -> bool:
+    def contains_(self, a: Any, b: Any) -> bool:
         return contains(b, a)
 
-    def not_contains(self, a: any, b: any) -> bool:
+    def not_contains(self, a: Any, b: Any) -> bool:
         return not contains(b, a)
 
-    def var(self, name: str) -> any:
+    def var(self, name: str) -> Any:
         try:
             return self.vars[name]
         except KeyError:
@@ -156,7 +159,7 @@ _parser = Lark(_grammar, start="start", parser="lalr")
 
 
 class Variable:
-    def __init__(self, expression: any):
+    def __init__(self, expression: Any):
         self.expression = expression
         self.parse_tree = None
         self.val = None
@@ -173,7 +176,7 @@ class Variable:
     def _compile(self, expression: str) -> ParseTree:
         return _parser.parse(expression)
 
-    def fetch(self, extend: dict = {}) -> any:
+    def fetch(self, extend: dict = {}) -> Any:
         if self.parse_tree is None:
             return self.expression
 

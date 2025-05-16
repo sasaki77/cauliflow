@@ -1,5 +1,5 @@
 from pypelined.context import ctx_flowdata
-from pypelined.node import ProcessNode, node
+from pypelined.node import ArgumentSpec, ProcessNode, node
 
 
 @node.register("message")
@@ -8,7 +8,7 @@ class MessageNode(ProcessNode):
         fd = ctx_flowdata.get()
         fd[self.name] = self.params["msg"]
 
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "msg": {"type": "str", "required": True},
         }

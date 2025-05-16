@@ -13,12 +13,12 @@ class ContextFlows:
 
 @dataclass
 class ContextFlow:
-    name: str = None
+    name: str | None = None
 
 
 @dataclass
 class ContextNode:
-    name: str = None
+    name: str | None = None
 
 
 ctx_macros = ContextVar("pypelined.ctx_macros", default=Macros())

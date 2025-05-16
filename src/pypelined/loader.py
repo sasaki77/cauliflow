@@ -36,6 +36,7 @@ def flow_from_yaml(file_path: str | Path) -> Flows:
         flows = _make_seq(flow_dict)
     else:
         _logger.error("flows not defined")
+        raise TypeError
 
     if "macros" in yaml_dict:
         mcr = Macros()

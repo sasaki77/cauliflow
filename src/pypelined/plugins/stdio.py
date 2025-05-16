@@ -1,12 +1,12 @@
 from pprint import pprint
 
 from pypelined.context import ctx_flowdata
-from pypelined.node import ProcessNode, node
+from pypelined.node import ArgumentSpec, ProcessNode, node
 
 
 @node.register("stdout")
 class OutNode(ProcessNode):
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "src": {"type": "any", "required": False, "default": None},
             "pretty": {"type": "bool", "required": False, "default": False},

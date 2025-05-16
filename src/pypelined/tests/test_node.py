@@ -7,7 +7,7 @@ class NodeTest(Node):
     async def process(self) -> None:
         pass
 
-    def set_argument_spec(self) -> ArgumentSpec:
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "required_str": {"type": "str", "required": True},
             "not_required_str": {
@@ -32,7 +32,7 @@ class NodeTestWoDefault(Node):
     async def process(self) -> None:
         pass
 
-    def set_argument_spec(self) -> ArgumentSpec:
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "wo_default": {"type": "str", "required": False},
         }

@@ -4,14 +4,14 @@ from zabbix_utils import AsyncSender, AsyncZabbixAPI, ItemValue
 
 from pypelined.context import ctx_flowdata
 from pypelined.logging import get_logger
-from pypelined.node import ProcessNode, node
+from pypelined.node import ArgumentSpec, ProcessNode, node
 
 _logger = get_logger(__name__)
 
 
 @node.register("zabbix_get_item")
 class ZabbixGetItemNode(ProcessNode):
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "url": {"type": "str", "required": False, "default": "localhost"},
             "user": {"type": "str", "required": False, "default": "root"},
@@ -24,7 +24,7 @@ class ZabbixGetItemNode(ProcessNode):
         self.api = AsyncZabbixAPI(url=self.params["url"])
         await self.api.login(user=self.params["user"], password=self.params["password"])
 
-        items = await self.api.item.get(
+        items = await self.api.item.get(  # type: ignore
             output=self.params["output"], filter=self.params["filter"]
         )
 
@@ -36,7 +36,7 @@ class ZabbixGetItemNode(ProcessNode):
 
 @node.register("zabbix_send")
 class ZabbixSend(ProcessNode):
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "server": {"type": "str", "required": False, "default": "localhost"},
             "port": {"type": "int", "required": False, "default": 10051},

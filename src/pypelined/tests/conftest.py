@@ -20,7 +20,7 @@ class AddNode(Node):
             flowdata = ctx_flowdata.get()
             flowdata[self.name] = _sum
 
-    def set_argument_spec(self) -> ArgumentSpec:
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "a": {"type": "int", "required": True},
             "b": {"type": "int", "required": True},

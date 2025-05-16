@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import NotRequired, TypedDict
+from typing import Any, NotRequired, TypedDict
 
 from pypelined.context import (
     ContextNode,
@@ -15,7 +15,7 @@ from pypelined.variable import Variable
 class ArgumentSpec(TypedDict):
     type: NotRequired[str]
     required: NotRequired[bool]
-    default: NotRequired[any]
+    default: NotRequired[Any]
 
 
 _logger = get_logger(__name__)
@@ -24,7 +24,7 @@ _logger = get_logger(__name__)
 class Node(ABC):
     def __init__(self, name: str, param_dict: dict):
         self.name: str = name
-        self.child: Node = None
+        self.child: Node | None = None
         self.argument_spec = self.set_argument_spec()
         self.vars = self.make_vars(self.argument_spec, param_dict)
         self.params = {}
@@ -43,10 +43,10 @@ class Node(ABC):
             return
         await self.child.run()
 
-    def set_argument_spec(self) -> ArgumentSpec:
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {}
 
-    def make_vars(self, argument_spec, param_dict) -> dict[Variable]:
+    def make_vars(self, argument_spec, param_dict) -> dict[str, Variable]:
         vars = {}
 
         for k, v in argument_spec.items():
@@ -102,7 +102,7 @@ class NodeFactory:
     def register(cls, name: str):
         _logger.debug(f"{name} is registered")
 
-        def inner_wrapper(wrapped_class: Node):
+        def inner_wrapper(wrapped_class: type[Node]):
             if name in cls.registry:
                 _logger.warning(f"{name} is already registered.")
             cls.registry[name] = wrapped_class

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.logging import get_logger
-from pypelined.node import ProcessNode, node
+from pypelined.node import ArgumentSpec, ProcessNode, node
 
 _logger = get_logger(__name__)
 
@@ -17,7 +17,7 @@ class DataFormat(StrEnum):
 
 @node.register("input_csv")
 class InputCSVNode(ProcessNode):
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "path": {"type": "path", "required": True},
             "out_bb": {"type": "bool", "required": False, "default": False},
@@ -38,7 +38,7 @@ class InputCSVNode(ProcessNode):
             fd = ctx_flowdata.get()
             fd[self.name] = csvdata
 
-    def get_csvdata(self, path: Path, format: str | DataFormat) -> None:
+    def get_csvdata(self, path: Path, format: str | DataFormat) -> dict | list | None:
         with path.open(newline="") as csvfile:
             if format == DataFormat.DICT:
                 reader = csv.DictReader(csvfile, skipinitialspace=True)

@@ -2,13 +2,12 @@ from copy import deepcopy
 from functools import singledispatchmethod
 
 from pypelined.context import ctx_blackboard, ctx_flowdata
-from pypelined.node import ProcessNode, node
-from pypelined.variable import Variable
+from pypelined.node import ArgumentSpec, ProcessNode, node
 
 
 @node.register("dict_keys")
 class DictKeysNode(ProcessNode):
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "input": {"type": "dict", "required": True},
             "out_bb": {"type": "bool", "required": False, "default": False},
@@ -29,7 +28,7 @@ class DictKeysNode(ProcessNode):
 
 @node.register("dict_values")
 class DictValuesNode(ProcessNode):
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "input": {"type": "dict", "required": True},
             "out_bb": {"type": "bool", "required": False, "default": False},
@@ -50,7 +49,7 @@ class DictValuesNode(ProcessNode):
 
 @node.register("concat")
 class ConcatNode(ProcessNode):
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "first": {"type": "any", "required": True},
             "second": {"type": "any", "required": True},
@@ -71,7 +70,9 @@ class ConcatNode(ProcessNode):
             fd[self.name] = out
         return
 
-    def _concat(self, first: Variable, second: Variable) -> str | list[str]:
+    def _concat(
+        self, first: str | list[str], second: str | list[str]
+    ) -> str | list[str]:
         is_1st_list = isinstance(first, list)
         is_2nd_list = isinstance(second, list)
 
@@ -83,17 +84,17 @@ class ConcatNode(ProcessNode):
             return out
 
         if is_1st_list:
-            return [fl + second for fl in first]
+            return [fl + second for fl in first]  # type: ignore
 
         if is_2nd_list:
-            return [first + sl for sl in second]
+            return [first + sl for sl in second]  # type: ignore
 
         return first + second
 
 
 @node.register("mutate")
 class MutateNode(ProcessNode):
-    def set_argument_spec(self):
+    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {
             "target": {"type": "any", "required": True},
             "split": {"type": "dict", "required": False, "default": {}},
