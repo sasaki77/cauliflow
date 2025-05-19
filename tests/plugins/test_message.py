@@ -1,7 +1,6 @@
 import pytest
-
-from pypelined.context import ctx_flowdata
-from pypelined.plugins.message import MessageNode
+from cauliflow.context import ctx_flowdata
+from cauliflow.plugins.message import MessageNode
 
 
 @pytest.mark.asyncio

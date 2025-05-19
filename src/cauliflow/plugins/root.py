@@ -1,5 +1,5 @@
-from pypelined.context import init_flowdata
-from pypelined.node import ProcessNode, node
+from cauliflow.context import init_flowdata
+from cauliflow.node import ProcessNode, node
 
 
 @node.register("root")

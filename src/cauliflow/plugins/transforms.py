@@ -1,7 +1,7 @@
 from copy import deepcopy
 from functools import singledispatchmethod
 
-from pypelined.node import ArgumentSpec, ProcessNode, node
+from cauliflow.node import ArgumentSpec, ProcessNode, node
 
 
 @node.register("dict_keys")

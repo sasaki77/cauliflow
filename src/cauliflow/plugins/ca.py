@@ -2,9 +2,8 @@ from functools import singledispatch
 
 import epics
 import janus
-
-from pypelined.context import ctx_flowdata, init_flowdata
-from pypelined.node import ArgumentSpec, ProcessNode, TriggerNode, node
+from cauliflow.context import ctx_flowdata, init_flowdata
+from cauliflow.node import ArgumentSpec, ProcessNode, TriggerNode, node
 
 
 @node.register("camonitor")

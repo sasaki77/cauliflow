@@ -1,9 +1,9 @@
 from contextvars import ContextVar
 from dataclasses import dataclass
 
-from pypelined.blackboard import BlackBoard
-from pypelined.flowdata import FlowData
-from pypelined.macros import Macros
+from cauliflow.blackboard import BlackBoard
+from cauliflow.flowdata import FlowData
+from cauliflow.macros import Macros
 
 
 @dataclass
@@ -21,9 +21,9 @@ class ContextNode:
     name: str | None = None
 
 
-ctx_macros = ContextVar("pypelined.ctx_macros", default=Macros())
-ctx_flowdata = ContextVar("pypelined.ctx_flowdata", default=FlowData())
-ctx_blackboard = ContextVar("pypelined.ctx_blackboard", default=BlackBoard())
+ctx_macros = ContextVar("cauliflow.ctx_macros", default=Macros())
+ctx_flowdata = ContextVar("cauliflow.ctx_flowdata", default=FlowData())
+ctx_blackboard = ContextVar("cauliflow.ctx_blackboard", default=BlackBoard())
 ctx_flows = ContextVar("pypelind.ctx_flows", default=ContextFlows())
 ctx_flow = ContextVar("pypelind.ctx_flow", default=ContextFlow())
 ctx_node = ContextVar("pypelind.ctx_node", default=ContextNode())

@@ -1,7 +1,6 @@
 import pytest
-
-from pypelined.context import ctx_flowdata
-from pypelined.flow import Flow
+from cauliflow.context import ctx_flowdata
+from cauliflow.flow import Flow
 
 
 @pytest.mark.asyncio

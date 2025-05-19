@@ -1,15 +1,15 @@
 import asyncio
 from abc import ABC, abstractmethod
 
-from pypelined.context import (
+from cauliflow.context import (
     ContextFlow,
     ContextNode,
     ctx_blackboard,
     ctx_flow,
     ctx_node,
 )
-from pypelined.logging import get_logger
-from pypelined.node import Node, node
+from cauliflow.logging import get_logger
+from cauliflow.node import Node, node
 
 _logger = get_logger(__name__)
 

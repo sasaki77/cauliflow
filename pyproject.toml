@@ -1,7 +1,7 @@
 [project]
-name = "pypelined"
+name = "cauliflow"
 version = "0.1.0"
-description = "pypelined"
+description = "cauliflow"
 readme = "README.md"
 authors = [{ name = "Shinya Sasaki", email = "shinya.sasaki@kek.jp" }]
 requires-python = ">=3.11"
@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-pypelined = "pypelined.cli:cli"
+cauliflow = "cauliflow.cli:cli"
 
 [build-system]
 requires = ["hatchling"]

@@ -2,8 +2,8 @@ import csv
 from enum import StrEnum
 from pathlib import Path
 
-from pypelined.logging import get_logger
-from pypelined.node import ArgumentSpec, ProcessNode, node
+from cauliflow.logging import get_logger
+from cauliflow.node import ArgumentSpec, ProcessNode, node
 
 _logger = get_logger(__name__)
 

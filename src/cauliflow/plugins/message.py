@@ -1,4 +1,4 @@
-from pypelined.node import ArgumentSpec, ProcessNode, node
+from cauliflow.node import ArgumentSpec, ProcessNode, node
 
 
 @node.register("message")

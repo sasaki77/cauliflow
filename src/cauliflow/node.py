@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
 from typing import Any, NotRequired, TypedDict
 
-from pypelined.context import (
+from cauliflow.context import (
     ContextNode,
     ctx_blackboard,
     ctx_flowdata,
     ctx_flows,
     ctx_node,
 )
-from pypelined.logging import get_logger
-from pypelined.variable import Variable
+from cauliflow.logging import get_logger
+from cauliflow.variable import Variable
 
 
 class ArgumentSpec(TypedDict):

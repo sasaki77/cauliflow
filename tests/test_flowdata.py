@@ -1,6 +1,5 @@
 import pytest
-
-from pypelined.flowdata import FlowData
+from cauliflow.flowdata import FlowData
 
 
 def test_flowdata():

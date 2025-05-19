@@ -3,10 +3,9 @@ from logging import getLogger
 from pathlib import Path
 
 import yaml
-
-from pypelined.context import ctx_macros
-from pypelined.flow import ConcurrentFlows, Flow, Flows, SequentialFlows
-from pypelined.macros import Macros
+from cauliflow.context import ctx_macros
+from cauliflow.flow import ConcurrentFlows, Flow, Flows, SequentialFlows
+from cauliflow.macros import Macros
 
 _logger = getLogger(__name__)
 

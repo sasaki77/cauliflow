@@ -2,17 +2,16 @@ import asyncio
 from logging import DEBUG, WARNING, getLogger
 
 import click
-
-from pypelined.context import ContextFlows, ctx_flows, ctx_macros
-from pypelined.loader import flow_from_yaml
-from pypelined.logging import get_logger
-from pypelined.plugin_manager import PluginManager
+from cauliflow.context import ContextFlows, ctx_flows, ctx_macros
+from cauliflow.loader import flow_from_yaml
+from cauliflow.logging import get_logger
+from cauliflow.plugin_manager import PluginManager
 
 _logger = get_logger(__name__)
 
 
 def init_logger(debug: bool = False) -> None:
-    logger = getLogger("pypelined")
+    logger = getLogger("cauliflow")
     level = DEBUG if debug else WARNING
     logger.setLevel(level)
 

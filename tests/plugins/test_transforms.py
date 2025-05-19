@@ -1,7 +1,6 @@
 import pytest
-
-from pypelined.context import ctx_flowdata
-from pypelined.plugins.transforms import (
+from cauliflow.context import ctx_flowdata
+from cauliflow.plugins.transforms import (
     ConcatNode,
     DictKeysNode,
     DictValuesNode,

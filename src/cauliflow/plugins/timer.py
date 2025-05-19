@@ -1,8 +1,8 @@
 import asyncio
 from datetime import datetime, timedelta
 
-from pypelined.context import init_flowdata
-from pypelined.node import ArgumentSpec, TriggerNode, node
+from cauliflow.context import init_flowdata
+from cauliflow.node import ArgumentSpec, TriggerNode, node
 
 
 @node.register("interval")

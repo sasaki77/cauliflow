@@ -1,7 +1,6 @@
 import pytest
-
-from pypelined.context import ctx_blackboard, ctx_flowdata
-from pypelined.node import ArgumentSpec, Node
+from cauliflow.context import ctx_blackboard, ctx_flowdata
+from cauliflow.node import ArgumentSpec, Node
 
 
 class NodeTest(Node):

@@ -1,7 +1,7 @@
 import importlib
 import pkgutil
 
-import pypelined.plugins as plugins
+import cauliflow.plugins as plugins
 
 
 # https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/

@@ -1,10 +1,9 @@
 from functools import singledispatchmethod
 
+from cauliflow.context import ctx_flowdata
+from cauliflow.logging import get_logger
+from cauliflow.node import ArgumentSpec, ProcessNode, node
 from zabbix_utils import AsyncSender, AsyncZabbixAPI, ItemValue
-
-from pypelined.context import ctx_flowdata
-from pypelined.logging import get_logger
-from pypelined.node import ArgumentSpec, ProcessNode, node
 
 _logger = get_logger(__name__)
 

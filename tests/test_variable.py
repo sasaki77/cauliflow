@@ -1,10 +1,9 @@
 import pytest
-
-from pypelined.blackboard import BlackBoard
-from pypelined.context import ctx_blackboard, ctx_flowdata, ctx_macros
-from pypelined.flowdata import FlowData
-from pypelined.macros import Macros
-from pypelined.variable import Variable
+from cauliflow.blackboard import BlackBoard
+from cauliflow.context import ctx_blackboard, ctx_flowdata, ctx_macros
+from cauliflow.flowdata import FlowData
+from cauliflow.macros import Macros
+from cauliflow.variable import Variable
 
 
 @pytest.fixture

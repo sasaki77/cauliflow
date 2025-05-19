@@ -1,6 +1,6 @@
 import logging
 
-from pypelined.context import ctx_flow, ctx_node
+from cauliflow.context import ctx_flow, ctx_node
 
 
 class InjectingFilter(logging.Filter):

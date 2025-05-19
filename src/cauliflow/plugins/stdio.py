@@ -1,7 +1,7 @@
 from pprint import pprint
 
-from pypelined.context import ctx_flowdata
-from pypelined.node import ArgumentSpec, ProcessNode, node
+from cauliflow.context import ctx_flowdata
+from cauliflow.node import ArgumentSpec, ProcessNode, node
 
 
 @node.register("stdout")

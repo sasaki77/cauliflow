@@ -1,7 +1,6 @@
 import pytest
-
-from pypelined.context import ctx_flowdata
-from pypelined.plugins.itemloop import ForDict, ForList
+from cauliflow.context import ctx_flowdata
+from cauliflow.plugins.itemloop import ForDict, ForList
 
 
 @pytest.mark.asyncio

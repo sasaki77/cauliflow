@@ -1,8 +1,8 @@
 from typing import TypedDict
 
-from pypelined.logging import get_logger
-from pypelined.node import ArgumentSpec, FlowControlNode, Node, node
-from pypelined.variable import Variable
+from cauliflow.logging import get_logger
+from cauliflow.node import ArgumentSpec, FlowControlNode, Node, node
+from cauliflow.variable import Variable
 
 _logger = get_logger(__name__)
 

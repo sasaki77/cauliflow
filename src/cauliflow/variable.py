@@ -1,9 +1,8 @@
 from operator import contains
 from typing import Any
 
+from cauliflow.context import ctx_blackboard, ctx_flowdata, ctx_macros
 from lark import Lark, ParseTree, Transformer, Tree, v_args
-
-from pypelined.context import ctx_blackboard, ctx_flowdata, ctx_macros
 
 _grammar = """
     start: (text | expression_wrapper)*
