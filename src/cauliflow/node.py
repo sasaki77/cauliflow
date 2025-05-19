@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Any, NotRequired, TypedDict
+from dataclasses import dataclass
+from typing import Any
 
 from cauliflow.context import (
     ContextNode,
@@ -12,17 +13,18 @@ from cauliflow.logging import get_logger
 from cauliflow.variable import Variable
 
 
-class ArgumentSpec(TypedDict):
-    type: NotRequired[str]
-    required: NotRequired[bool]
-    default: NotRequired[Any]
+@dataclass(frozen=True)
+class ArgSpec:
+    type: str
+    required: bool = True
+    default: Any = None
 
 
 _logger = get_logger(__name__)
 
-COMMON_ARGUMENT_SPEC: dict[str, ArgumentSpec] = {
-    "out_bb": {"type": "bool", "required": False, "default": False},
-    "out_field": {"type": "str", "required": False, "default": None},
+COMMON_ARGUMENT_SPEC: dict[str, ArgSpec] = {
+    "out_bb": ArgSpec(type="bool", required=False, default=False),
+    "out_field": ArgSpec(type="str", required=False, default=None),
 }
 
 
@@ -31,7 +33,7 @@ class Node(ABC):
         self.name: str = name
         self.child: Node | None = None
         self.enable_output = False
-        self.argument_spec: dict[str, ArgumentSpec] = {}
+        self.argument_spec: dict[str, ArgSpec] = {}
         self.argument_spec.update(self.set_argument_spec())
         self.vars = self._make_vars(self.argument_spec, param_dict)
         self.params = {}
@@ -50,7 +52,7 @@ class Node(ABC):
             return
         await self.child.run()
 
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {}
 
     def set_common_output_args(self) -> None:
@@ -75,7 +77,9 @@ class Node(ABC):
         var = ctx.get()
         var[field] = value
 
-    def _make_vars(self, argument_spec, param_dict) -> dict[str, Variable]:
+    def _make_vars(
+        self, argument_spec: dict[str, ArgSpec], param_dict: dict
+    ) -> dict[str, Variable]:
         vars = {}
 
         for k, v in argument_spec.items():
@@ -83,15 +87,11 @@ class Node(ABC):
                 vars[k] = Variable(param_dict[k])
                 continue
 
-            if v.get("required", False):
+            if v.required is True:
                 msg = f"missing parameter required by {k}"
                 raise TypeError(msg)
 
-            if "default" not in v:
-                msg = f"default value is not specified required by {k}"
-                raise TypeError(msg)
-
-            vars[k] = Variable(v["default"])
+            vars[k] = Variable(v.default)
 
         return vars
 

@@ -1,15 +1,15 @@
 from copy import deepcopy
 from functools import singledispatchmethod
 
-from cauliflow.node import ArgumentSpec, ProcessNode, node
+from cauliflow.node import ArgSpec, ProcessNode, node
 
 
 @node.register("dict_keys")
 class DictKeysNode(ProcessNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "input": {"type": "dict", "required": True},
+            "input": ArgSpec(type="dict", required=True),
         }
 
     async def process(self) -> None:
@@ -20,10 +20,10 @@ class DictKeysNode(ProcessNode):
 
 @node.register("dict_values")
 class DictValuesNode(ProcessNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "input": {"type": "dict", "required": True},
+            "input": ArgSpec(type="dict", required=True),
         }
 
     async def process(self) -> None:
@@ -34,11 +34,11 @@ class DictValuesNode(ProcessNode):
 
 @node.register("concat")
 class ConcatNode(ProcessNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "first": {"type": "any", "required": True},
-            "second": {"type": "any", "required": True},
+            "first": ArgSpec(type="any", required=True),
+            "second": ArgSpec(type="any", required=True),
         }
 
     async def process(self) -> None:
@@ -71,12 +71,12 @@ class ConcatNode(ProcessNode):
 
 @node.register("mutate")
 class MutateNode(ProcessNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "target": {"type": "any", "required": True},
-            "split": {"type": "dict", "required": False, "default": {}},
-            "copy": {"type": "dict", "required": False, "default": {}},
+            "target": ArgSpec(type="any", required=True),
+            "split": ArgSpec(type="dict", required=False, default={}),
+            "copy": ArgSpec(type="dict", required=False, default={}),
         }
 
     async def process(self) -> None:

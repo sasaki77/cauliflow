@@ -2,15 +2,13 @@ import asyncio
 from datetime import datetime, timedelta
 
 from cauliflow.context import init_flowdata
-from cauliflow.node import ArgumentSpec, TriggerNode, node
+from cauliflow.node import ArgSpec, TriggerNode, node
 
 
 @node.register("interval")
 class IntervalNode(TriggerNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
-        return {
-            "interval": {"type": "float", "required": True},
-        }
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
+        return {"interval": ArgSpec(type="float", required=True)}
 
     async def process(self) -> None:
         interval = self.params["interval"]

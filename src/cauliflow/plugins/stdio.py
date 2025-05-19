@@ -1,15 +1,15 @@
 from pprint import pprint
 
 from cauliflow.context import ctx_flowdata
-from cauliflow.node import ArgumentSpec, ProcessNode, node
+from cauliflow.node import ArgSpec, ProcessNode, node
 
 
 @node.register("stdout")
 class OutNode(ProcessNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
-            "src": {"type": "any", "required": False, "default": None},
-            "pretty": {"type": "bool", "required": False, "default": False},
+            "src": ArgSpec(type="any", required=False, default=None),
+            "pretty": ArgSpec(type="bool", required=False, default=False),
         }
 
     async def process(self) -> None:

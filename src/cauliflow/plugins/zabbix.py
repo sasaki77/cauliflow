@@ -1,22 +1,23 @@
 from functools import singledispatchmethod
 
+from zabbix_utils import AsyncSender, AsyncZabbixAPI, ItemValue
+
 from cauliflow.context import ctx_flowdata
 from cauliflow.logging import get_logger
-from cauliflow.node import ArgumentSpec, ProcessNode, node
-from zabbix_utils import AsyncSender, AsyncZabbixAPI, ItemValue
+from cauliflow.node import ArgSpec, ProcessNode, node
 
 _logger = get_logger(__name__)
 
 
 @node.register("zabbix_get_item")
 class ZabbixGetItemNode(ProcessNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
-            "url": {"type": "str", "required": False, "default": "localhost"},
-            "user": {"type": "str", "required": False, "default": "root"},
-            "password": {"type": "str", "required": False, "default": "Zabbix"},
-            "filter": {"type": "dict", "required": False, "default": None},
-            "output": {"type": "list", "required": False, "default": None},
+            "url": ArgSpec(type="str", required=False, default="localhost"),
+            "user": ArgSpec(type="str", required=False, default="root"),
+            "password": ArgSpec(type="str", required=False, default="Zabbix"),
+            "filter": ArgSpec(type="dict", required=False, default=None),
+            "output": ArgSpec(type="list", required=False, default=None),
         }
 
     async def process(self) -> None:
@@ -35,11 +36,11 @@ class ZabbixGetItemNode(ProcessNode):
 
 @node.register("zabbix_send")
 class ZabbixSend(ProcessNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
-            "server": {"type": "str", "required": False, "default": "localhost"},
-            "port": {"type": "int", "required": False, "default": 10051},
-            "input": {"type": "str", "required": True},
+            "server": ArgSpec(type="str", required=False, default="localhost"),
+            "port": ArgSpec(type="int", required=False, default=10051),
+            "input": ArgSpec(type="str", required=True),
         }
 
     async def process(self) -> None:

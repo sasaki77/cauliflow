@@ -2,8 +2,9 @@ from functools import singledispatch
 
 import epics
 import janus
+
 from cauliflow.context import ctx_flowdata, init_flowdata
-from cauliflow.node import ArgumentSpec, ProcessNode, TriggerNode, node
+from cauliflow.node import ArgSpec, ProcessNode, TriggerNode, node
 
 
 @node.register("camonitor")
@@ -13,9 +14,9 @@ class CamonitorNode(TriggerNode):
         self.q = janus.Queue()
         self.pvs = []
 
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
-            "pvname": {"type": "any", "required": True},
+            "pvname": ArgSpec(type="any", required=True),
         }
 
     def onChanges(self, pvname=None, value=None, char_value=None, **kw):
@@ -46,9 +47,9 @@ class CagetNode(ProcessNode):
         self.q = janus.Queue()
         self.pvs: list[epics.PV] | None = None
 
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
-            "pvname": {"type": "any", "required": True},
+            "pvname": ArgSpec(type="any", required=True),
         }
 
     async def process(self):

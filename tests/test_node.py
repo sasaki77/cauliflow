@@ -1,41 +1,20 @@
 import pytest
+
 from cauliflow.context import ctx_blackboard, ctx_flowdata
-from cauliflow.node import ArgumentSpec, Node
+from cauliflow.node import ArgSpec, Node
 
 
 class NodeTest(Node):
     async def process(self) -> None:
         pass
 
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "required_str": {"type": "str", "required": True},
-            "not_required_str": {
-                "type": "str",
-                "required": False,
-                "default": "default",
-            },
-            "not_required_bool": {
-                "type": "bool",
-                "required": False,
-                "default": False,
-            },
-            "not_required_float": {
-                "type": "float",
-                "required": False,
-                "default": 1.1,
-            },
-        }
-
-
-class NodeTestWoDefault(Node):
-    async def process(self) -> None:
-        pass
-
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
-        return {
-            "wo_default": {"type": "str", "required": False},
+            "required_str": ArgSpec(type="str", required=True),
+            "not_required_str": ArgSpec(type="str", required=False, default="default"),
+            "not_required_bool": ArgSpec(type="bool", required=False, default=False),
+            "not_required_float": ArgSpec(type="float", required=False, default=1.1),
         }
 
 
@@ -75,15 +54,6 @@ async def test_node_without_required():
         node = NodeTest(name="msg", param_dict=args)
         await node.run()
     assert "missing parameter required by" in str(err.value)
-
-
-@pytest.mark.asyncio
-async def test_node_wo_default():
-    with pytest.raises(TypeError) as err:
-        args = {}
-        node = NodeTestWoDefault(name="msg", param_dict=args)
-        await node.run()
-    assert "default value is not specified" in str(err.value)
 
 
 @pytest.mark.parametrize(

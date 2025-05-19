@@ -3,7 +3,7 @@ from enum import StrEnum
 from pathlib import Path
 
 from cauliflow.logging import get_logger
-from cauliflow.node import ArgumentSpec, ProcessNode, node
+from cauliflow.node import ArgSpec, ProcessNode, node
 
 _logger = get_logger(__name__)
 
@@ -16,11 +16,11 @@ class DataFormat(StrEnum):
 
 @node.register("input_csv")
 class InputCSVNode(ProcessNode):
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "path": {"type": "path", "required": True},
-            "format": {"type": "str", "required": False, "default": "key_value"},
+            "path": ArgSpec(type="path", required=True),
+            "format": ArgSpec(type="str", required=False, default="key_value"),
         }
 
     async def process(self) -> None:

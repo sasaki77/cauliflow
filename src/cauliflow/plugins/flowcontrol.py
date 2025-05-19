@@ -1,7 +1,7 @@
 from typing import TypedDict
 
 from cauliflow.logging import get_logger
-from cauliflow.node import ArgumentSpec, FlowControlNode, Node, node
+from cauliflow.node import ArgSpec, FlowControlNode, Node, node
 from cauliflow.variable import Variable
 
 _logger = get_logger(__name__)
@@ -19,11 +19,11 @@ class IfNode(FlowControlNode):
         self.cond: Variable | None = None
         self.if_children: TypeChild = {"child_if": None, "child_else": None}
 
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
-            "condition": {"type": "str", "required": True},
-            "child_if": {"type": "node", "required": False, "default": None},
-            "child_else": {"type": "node", "required": False, "default": None},
+            "condition": ArgSpec(type="str", required=True),
+            "child_if": ArgSpec(type="node", required=False, default=None),
+            "child_else": ArgSpec(type="node", required=False, default=None),
         }
 
     async def process(self) -> None:

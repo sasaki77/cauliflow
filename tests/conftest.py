@@ -1,9 +1,10 @@
 import pytest
+
 from cauliflow.blackboard import BlackBoard
 from cauliflow.context import ctx_blackboard, ctx_flowdata, ctx_macros
 from cauliflow.flowdata import FlowData
 from cauliflow.macros import Macros
-from cauliflow.node import ArgumentSpec, Node, node
+from cauliflow.node import ArgSpec, Node, node
 from cauliflow.plugin_manager import PluginManager
 
 
@@ -19,11 +20,11 @@ class AddNode(Node):
             flowdata = ctx_flowdata.get()
             flowdata[self.name] = _sum
 
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
-            "a": {"type": "int", "required": True},
-            "b": {"type": "int", "required": True},
-            "out_bb": {"type": "bool", "required": False, "default": False},
+            "a": ArgSpec(type="int", required=True),
+            "b": ArgSpec(type="int", required=True),
+            "out_bb": ArgSpec(type="bool", required=False, default=False),
         }
 
 

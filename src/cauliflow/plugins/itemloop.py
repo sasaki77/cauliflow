@@ -1,7 +1,7 @@
 from functools import singledispatchmethod
 
 from cauliflow.logging import get_logger
-from cauliflow.node import ArgumentSpec, ProcessNode, node
+from cauliflow.node import ArgSpec, ProcessNode, node
 from cauliflow.variable import Variable
 
 _logger = get_logger(__name__)
@@ -14,12 +14,12 @@ class ForList(ProcessNode):
         self.variable = None
         self.filter = None
 
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "lists": {"type": "list", "required": True},
-            "expression": {"type": "str", "required": True},
-            "filter": {"type": "str", "required": False, "default": None},
+            "lists": ArgSpec(type="list", required=True),
+            "expression": ArgSpec(type="str", required=True),
+            "filter": ArgSpec(type="str", required=False, default=None),
         }
 
     async def process(self) -> None:
@@ -85,13 +85,13 @@ class ForDict(ProcessNode):
         self.val = None
         self.filter = None
 
-    def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "lists": {"type": "list", "required": True},
-            "key": {"type": "str", "required": True},
-            "val": {"type": "str", "required": True},
-            "filter": {"type": "str", "required": False, "default": None},
+            "lists": ArgSpec(type="list", required=True),
+            "key": ArgSpec(type="str", required=True),
+            "val": ArgSpec(type="str", required=True),
+            "filter": ArgSpec(type="str", required=False, default=None),
         }
 
     async def process(self) -> None:
