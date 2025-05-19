@@ -12,3 +12,6 @@ wheels/
 # Unit test
 .tox
 .pytest_cache/
+
+# Docs
+docs/_build
