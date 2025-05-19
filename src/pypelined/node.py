@@ -71,7 +71,7 @@ class Node(ABC):
             val = v.fetch()
             self.params[k] = val
 
-    def add_child(self, child: "Node") -> None:
+    def add_child(self, child: "Node", param: str | None = None) -> None:
         self.child = child
 
 
@@ -80,6 +80,10 @@ class TriggerNode(Node):
 
 
 class ProcessNode(Node):
+    pass
+
+
+class FlowControlNode(Node):
     pass
 
 

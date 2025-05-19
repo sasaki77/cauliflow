@@ -19,7 +19,7 @@ class Flow:
         self.blackboard = ctx_blackboard.get()
         self.name = name
         self.root: Node = node.create("root", name="root", param_dict={})
-        self.nodes = {}
+        self.nodes: dict[str, Node] = {}
         self.nodes["root"] = self.root
 
     async def run(self) -> None:
@@ -38,8 +38,15 @@ class Flow:
 
         self.nodes[name] = node.create(_plugin_name, name=name, param_dict=param_dict)
 
-        if _parent:
+        if not _parent:
+            return
+
+        if "." not in _parent:
             self.nodes[_parent].add_child(self.nodes[name])
+            return
+
+        parent, field = _parent.split(".")
+        self.nodes[parent].add_child(self.nodes[name], field)
 
 
 class Flows(ABC):
