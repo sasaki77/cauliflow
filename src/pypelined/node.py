@@ -20,13 +20,20 @@ class ArgumentSpec(TypedDict):
 
 _logger = get_logger(__name__)
 
+COMMON_ARGUMENT_SPEC: dict[str, ArgumentSpec] = {
+    "out_bb": {"type": "bool", "required": False, "default": False},
+    "out_field": {"type": "str", "required": False, "default": None},
+}
+
 
 class Node(ABC):
     def __init__(self, name: str, param_dict: dict):
         self.name: str = name
         self.child: Node | None = None
-        self.argument_spec = self.set_argument_spec()
-        self.vars = self.make_vars(self.argument_spec, param_dict)
+        self.enable_output = False
+        self.argument_spec: dict[str, ArgumentSpec] = {}
+        self.argument_spec.update(self.set_argument_spec())
+        self.vars = self._make_vars(self.argument_spec, param_dict)
         self.params = {}
 
     @abstractmethod
@@ -34,7 +41,7 @@ class Node(ABC):
 
     async def run(self) -> None:
         ctx_node.set(ContextNode(name=self.name))
-        self.fetch_params()
+        self._fetch_params()
         await self.process()
         flows = ctx_flows.get()
         if flows.debug:
@@ -46,7 +53,29 @@ class Node(ABC):
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
         return {}
 
-    def make_vars(self, argument_spec, param_dict) -> dict[str, Variable]:
+    def set_common_output_args(self) -> None:
+        self.enable_output = True
+        self.argument_spec.update(COMMON_ARGUMENT_SPEC)
+
+    def add_child(self, child: "Node", param: str | None = None) -> None:
+        self.child = child
+
+    def output(self, value: Any) -> None:
+        if self.enable_output is False:
+            _logger.warning(
+                "output is diabled. call set_common_output_args in set_argumet_spec method"
+            )
+            return
+
+        param_out_field = self.params["out_field"]
+        field = param_out_field if param_out_field else self.name
+
+        ctx = ctx_blackboard if self.params["out_bb"] else ctx_flowdata
+
+        var = ctx.get()
+        var[field] = value
+
+    def _make_vars(self, argument_spec, param_dict) -> dict[str, Variable]:
         vars = {}
 
         for k, v in argument_spec.items():
@@ -66,13 +95,10 @@ class Node(ABC):
 
         return vars
 
-    def fetch_params(self) -> None:
+    def _fetch_params(self) -> None:
         for k, v in self.vars.items():
             val = v.fetch()
             self.params[k] = val
-
-    def add_child(self, child: "Node", param: str | None = None) -> None:
-        self.child = child
 
 
 class TriggerNode(Node):

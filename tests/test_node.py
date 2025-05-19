@@ -1,5 +1,6 @@
 import pytest
 
+from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.node import ArgumentSpec, Node
 
 
@@ -8,6 +9,7 @@ class NodeTest(Node):
         pass
 
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+        self.set_common_output_args()
         return {
             "required_str": {"type": "str", "required": True},
             "not_required_str": {
@@ -83,3 +85,21 @@ async def test_node_wo_default():
         node = NodeTestWoDefault(name="msg", param_dict=args)
         await node.run()
     assert "default value is not specified" in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "out_bb, out_field, ctx, expected_field",
+    [
+        (False, None, ctx_flowdata, "msg"),
+        (False, "field", ctx_flowdata, "field"),
+        (True, None, ctx_blackboard, "msg"),
+        (True, "field", ctx_blackboard, "field"),
+    ],
+)
+def test_output_bb(out_bb, out_field, ctx, expected_field, init_context_vars):
+    args = {"required_str": "foo", "out_bb": out_bb, "out_field": out_field}
+    node = NodeTest(name="msg", param_dict=args)
+    node._fetch_params()
+    node.output("test")
+    dest = ctx.get()
+    assert dest[expected_field] == "test"
