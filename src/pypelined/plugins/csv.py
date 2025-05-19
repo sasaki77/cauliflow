@@ -2,7 +2,6 @@ import csv
 from enum import StrEnum
 from pathlib import Path
 
-from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.logging import get_logger
 from pypelined.node import ArgumentSpec, ProcessNode, node
 
@@ -18,9 +17,9 @@ class DataFormat(StrEnum):
 @node.register("input_csv")
 class InputCSVNode(ProcessNode):
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+        self.set_common_output_args()
         return {
             "path": {"type": "path", "required": True},
-            "out_bb": {"type": "bool", "required": False, "default": False},
             "format": {"type": "str", "required": False, "default": "key_value"},
         }
 
@@ -29,14 +28,7 @@ class InputCSVNode(ProcessNode):
         format = self.params["format"]
 
         csvdata = self.get_csvdata(Path(path), format)
-
-        outbb = self.params["out_bb"]
-        if outbb:
-            _bb = ctx_blackboard.get()
-            _bb[self.name] = csvdata
-        else:
-            fd = ctx_flowdata.get()
-            fd[self.name] = csvdata
+        self.output(csvdata)
 
     def get_csvdata(self, path: Path, format: str | DataFormat) -> dict | list | None:
         with path.open(newline="") as csvfile:

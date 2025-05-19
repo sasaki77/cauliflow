@@ -1,74 +1,51 @@
 from copy import deepcopy
 from functools import singledispatchmethod
 
-from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.node import ArgumentSpec, ProcessNode, node
 
 
 @node.register("dict_keys")
 class DictKeysNode(ProcessNode):
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+        self.set_common_output_args()
         return {
             "input": {"type": "dict", "required": True},
-            "out_bb": {"type": "bool", "required": False, "default": False},
         }
 
     async def process(self) -> None:
         input = self.params["input"]
         out = list(input.keys())
-
-        outbb = self.params["out_bb"]
-        if outbb:
-            _bb = ctx_blackboard.get()
-            _bb[self.name] = out
-        else:
-            fd = ctx_flowdata.get()
-            fd[self.name] = out
+        self.output(out)
 
 
 @node.register("dict_values")
 class DictValuesNode(ProcessNode):
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+        self.set_common_output_args()
         return {
             "input": {"type": "dict", "required": True},
-            "out_bb": {"type": "bool", "required": False, "default": False},
         }
 
     async def process(self) -> None:
         input = self.params["input"]
         out = list(input.values())
-
-        outbb = self.params["out_bb"]
-        if outbb:
-            _bb = ctx_blackboard.get()
-            _bb[self.name] = out
-        else:
-            fd = ctx_flowdata.get()
-            fd[self.name] = out
+        self.output(out)
 
 
 @node.register("concat")
 class ConcatNode(ProcessNode):
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+        self.set_common_output_args()
         return {
             "first": {"type": "any", "required": True},
             "second": {"type": "any", "required": True},
-            "out_bb": {"type": "bool", "required": False, "default": False},
         }
 
     async def process(self) -> None:
         first = self.params["first"]
         second = self.params["second"]
         out = self._concat(first, second)
-
-        outbb = self.params["out_bb"]
-        if outbb:
-            _bb = ctx_blackboard.get()
-            _bb[self.name] = out
-        else:
-            fd = ctx_flowdata.get()
-            fd[self.name] = out
-        return
+        self.output(out)
 
     def _concat(
         self, first: str | list[str], second: str | list[str]
@@ -95,24 +72,18 @@ class ConcatNode(ProcessNode):
 @node.register("mutate")
 class MutateNode(ProcessNode):
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+        self.set_common_output_args()
         return {
             "target": {"type": "any", "required": True},
             "split": {"type": "dict", "required": False, "default": {}},
             "copy": {"type": "dict", "required": False, "default": {}},
-            "out_bb": {"type": "bool", "required": False, "default": False},
         }
 
     async def process(self) -> None:
         target = self.params["target"]
         target = deepcopy(target)
         self.apply(target)
-        outbb = self.params["out_bb"]
-        if outbb:
-            _bb = ctx_blackboard.get()
-            _bb[self.name] = target
-        else:
-            fd = ctx_flowdata.get()
-            fd[self.name] = target
+        self.output(target)
 
     @singledispatchmethod
     def apply(self, target: dict):

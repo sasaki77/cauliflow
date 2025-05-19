@@ -1,6 +1,5 @@
 from functools import singledispatchmethod
 
-from pypelined.context import ctx_blackboard, ctx_flowdata
 from pypelined.logging import get_logger
 from pypelined.node import ArgumentSpec, ProcessNode, node
 from pypelined.variable import Variable
@@ -16,11 +15,11 @@ class ForList(ProcessNode):
         self.filter = None
 
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+        self.set_common_output_args()
         return {
             "lists": {"type": "list", "required": True},
             "expression": {"type": "str", "required": True},
             "filter": {"type": "str", "required": False, "default": None},
-            "out_bb": {"type": "str", "required": False, "default": False},
         }
 
     async def process(self) -> None:
@@ -32,14 +31,7 @@ class ForList(ProcessNode):
         lists = self.params["lists"]
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.variable, var_dict)
-
-        outbb = self.params["out_bb"]
-        if outbb:
-            _bb = ctx_blackboard.get()
-            _bb[self.name] = items
-        else:
-            fd = ctx_flowdata.get()
-            fd[self.name] = items
+        self.output(items)
 
     @singledispatchmethod
     def _for_loop(
@@ -94,12 +86,12 @@ class ForDict(ProcessNode):
         self.filter = None
 
     def set_argument_spec(self) -> dict[str, ArgumentSpec]:
+        self.set_common_output_args()
         return {
             "lists": {"type": "list", "required": True},
             "key": {"type": "str", "required": True},
             "val": {"type": "str", "required": True},
             "filter": {"type": "str", "required": False, "default": None},
-            "out_bb": {"type": "str", "required": False, "default": False},
         }
 
     async def process(self) -> None:
@@ -113,13 +105,7 @@ class ForDict(ProcessNode):
         lists = self.params["lists"]
         var_dict = {}
         items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
-        outbb = self.params["out_bb"]
-        if outbb:
-            _bb = ctx_blackboard.get()
-            _bb[self.name] = items
-        else:
-            fd = ctx_flowdata.get()
-            fd[self.name] = items
+        self.output(items)
 
     @singledispatchmethod
     def _for_loop(
