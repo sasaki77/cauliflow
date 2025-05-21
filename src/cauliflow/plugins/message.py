@@ -8,4 +8,38 @@ class MessageNode(ProcessNode):
 
     def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
-        return {"msg": ArgSpec(type="str", required=True)}
+        return {"msg": ArgSpec(type="any", required=True)}
+
+    DOCUMENTATION = r"""
+    short_description: Output data to flowdata or blackboard.
+    description:
+        - This node outputs data to flowdata or blackboard
+    parameters:
+      msg:
+        description:
+        - Output data.
+    """
+
+    EXAMPLES = r"""
+# Output "hello" to the flowdata["msg"]
+- message:
+    name: "msg"
+    msg: "hello"
+
+# Output the value of 'foo' field in the blackboard to the flowdata["msg"]
+- message:
+    name: "msg"
+    msg: "{{ bb['foo'] }}"
+
+# Output "hello" to the flowdata["field"]
+- message:
+    name: "msg"
+    msg: "hello"
+    out_field: "field"
+
+# Output "hello" to the blackboard["msg"]
+- message:
+    name: "msg"
+    msg: "hello"
+    out_bb: yes
+    """
