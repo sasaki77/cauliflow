@@ -9,7 +9,7 @@ from cauliflow.node import ArgSpec, ProcessNode, TriggerNode, node
 
 @node.register("camonitor")
 class CamonitorNode(TriggerNode):
-    def __init__(self, name: str, param_dict: dict):
+    def __init__(self, name: str, param_dict: dict | None = None):
         super().__init__(name, param_dict)
         self.q = janus.Queue()
         self.pvs = []
@@ -42,7 +42,7 @@ class CamonitorNode(TriggerNode):
 
 @node.register("caget")
 class CagetNode(ProcessNode):
-    def __init__(self, name: str, param_dict: dict):
+    def __init__(self, name: str, param_dict: dict | None = None):
         super().__init__(name, param_dict)
         self.q = janus.Queue()
         self.pvs: list[epics.PV] | None = None

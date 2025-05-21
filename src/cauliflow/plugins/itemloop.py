@@ -9,7 +9,7 @@ _logger = get_logger(__name__)
 
 @node.register("for_list")
 class ForList(ProcessNode):
-    def __init__(self, name: str, param_dict: dict):
+    def __init__(self, name: str, param_dict: dict | None = None):
         super().__init__(name, param_dict)
         self.variable = None
         self.filter = None
@@ -79,7 +79,7 @@ class ForList(ProcessNode):
 
 @node.register("for_dict")
 class ForDict(ProcessNode):
-    def __init__(self, name: str, param_dict: dict):
+    def __init__(self, name: str, param_dict: dict | None = None):
         super().__init__(name, param_dict)
         self.key = None
         self.val = None

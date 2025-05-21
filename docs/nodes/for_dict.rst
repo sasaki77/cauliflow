@@ -1,0 +1,1 @@
+.. cauliflow-node:: for_dict

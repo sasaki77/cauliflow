@@ -1,0 +1,1 @@
+.. cauliflow-node:: camonitor

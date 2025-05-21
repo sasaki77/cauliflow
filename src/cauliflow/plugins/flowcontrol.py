@@ -14,7 +14,7 @@ class TypeChild(TypedDict):
 
 @node.register("if")
 class IfNode(FlowControlNode):
-    def __init__(self, name: str, param_dict: dict):
+    def __init__(self, name: str, param_dict: dict | None = None):
         super().__init__(name, param_dict)
         self.cond: Variable | None = None
         self.if_children: TypeChild = {"child_if": None, "child_else": None}

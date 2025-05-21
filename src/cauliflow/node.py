@@ -29,14 +29,20 @@ COMMON_ARGUMENT_SPEC: dict[str, ArgSpec] = {
 
 
 class Node(ABC):
-    def __init__(self, name: str, param_dict: dict):
+    DOCUMENTATION = None
+    EXAMPLES = None
+
+    def __init__(self, name: str, param_dict: dict | None = None):
         self.name: str = name
         self.child: Node | None = None
         self.enable_output = False
         self.argument_spec: dict[str, ArgSpec] = {}
         self.argument_spec.update(self.set_argument_spec())
-        self.vars = self._make_vars(self.argument_spec, param_dict)
+        self.vars = None
         self.params = {}
+
+        if param_dict is not None:
+            self.vars = self._make_vars(self.argument_spec, param_dict)
 
     @abstractmethod
     async def process(self): ...
@@ -59,13 +65,16 @@ class Node(ABC):
         self.enable_output = True
         self.argument_spec.update(COMMON_ARGUMENT_SPEC)
 
+    def set_params(self, params: dict) -> None:
+        self.vars = self._make_vars(self.argument_spec, params)
+
     def add_child(self, child: "Node", param: str | None = None) -> None:
         self.child = child
 
     def output(self, value: Any) -> None:
         if self.enable_output is False:
             _logger.warning(
-                "output is diabled. call set_common_output_args in set_argumet_spec method"
+                "output is disabled. call set_common_output_args in set_argumet_spec method"
             )
             return
 
@@ -96,6 +105,9 @@ class Node(ABC):
         return vars
 
     def _fetch_params(self) -> None:
+        if self.vars is None:
+            raise TypeError("vars is not initialized")
+
         for k, v in self.vars.items():
             val = v.fetch()
             self.params[k] = val
@@ -139,6 +151,12 @@ class NodeFactory:
             return wrapped_class
 
         return inner_wrapper
+
+    @classmethod
+    def get(cls, name: str) -> Node:
+        if name not in cls.registry:
+            raise KeyError
+        return cls.registry[name]
 
 
 node = NodeFactory

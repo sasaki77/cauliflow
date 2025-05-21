@@ -1,0 +1,1 @@
+.. cauliflow-node:: zabbix_get_item
