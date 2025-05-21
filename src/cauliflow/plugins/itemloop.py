@@ -9,6 +9,44 @@ _logger = get_logger(__name__)
 
 @node.register("for_list")
 class ForList(ProcessNode):
+    DOCUMENTATION = r"""
+    short_description: Loop the list of list or dict and create a new list to output.
+    description:
+      - Loop the list of list or dict and create a new list to output.
+    parameters:
+      lists:
+        description:
+          - List of list or dict to make a nested loop.
+      expression:
+        description:
+          - Expression of a item for a created list.
+          - Item in the loop of list can be referred as item*.
+          - Item in the loop of dict can be referred as item*_val and item*_key.
+          - For the first loop item can be referred as item0.
+          - For the second loop item can be referred as item1.
+      filter:
+        description:
+          - Condition not to add item for a crated list.
+          - Loop item can be refereed as same as in expression.
+    """
+
+    EXAMPLES = r"""
+# Create a list from list of list with filter parameter.
+# Output: {'for_list': [3, 4, 6]}
+- for_list:
+    name: "for_list"
+    lists: [[1, 2], [3, 4]]
+    expression: "item0*item1"
+    filter: "item0*item1>7"
+
+# Create a list from list of list and dict
+# Output: {'for_list': ['head1:val1', 'head1:val2', 'head2:val1', 'head2:val2']}
+- for_list:
+    name: "for_list"
+    lists: [["head1", "head2"], {"name1": "val1", "name2": "val2"}]
+    expression: "item0 + ':' + item1_val"
+    """
+
     def __init__(self, name: str, param_dict: dict | None = None):
         super().__init__(name, param_dict)
         self.variable = None
@@ -17,7 +55,7 @@ class ForList(ProcessNode):
     def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
-            "lists": ArgSpec(type="list", required=True),
+            "lists": ArgSpec(type="list[list|dict]", required=True),
             "expression": ArgSpec(type="str", required=True),
             "filter": ArgSpec(type="str", required=False, default=None),
         }
@@ -79,6 +117,41 @@ class ForList(ProcessNode):
 
 @node.register("for_dict")
 class ForDict(ProcessNode):
+    DOCUMENTATION = r"""
+    short_description: Loop the list of list or dict and create a new dict to output.
+    description:
+      - Loop the list of list or dict and create a new dict to output.
+    parameters:
+      lists:
+        description:
+          - List of list or dict to make a nested loop.
+      key:
+        description:
+          - Expression of a item of key for a created dict.
+          - Item in the loop of list can be referred as item*.
+          - Item in the loop of dict can be referred as item*_val and item*_key.
+          - For the first loop item can be referred as item0.
+          - For the second loop item can be referred as item1.
+      val:
+        description:
+          - Expression of of a item of value for a created dict.
+          - Loop item can be refereed as same as in key.
+      filter:
+        description:
+          - Condition not to add item for a crated dict.
+          - Loop item can be refereed as same as in expression.
+    """
+
+    EXAMPLES = r"""
+# Create a dict from list of list and dict
+# Output: {'for_dict': {'head1:name1': 'val1', 'head1:name2': 'val2', 'head2:name1': 'val1', 'head2:name2': 'val2'}}
+- for_dict:
+    name: "for_dict"
+    lists: [["head1", "head2"], {"name1": "val1", "name2": "val2"}]
+    key: "item0 + ':' + item1_key"
+    val: "item1_val"
+    """
+
     def __init__(self, name: str, param_dict: dict | None = None):
         super().__init__(name, param_dict)
         self.key = None

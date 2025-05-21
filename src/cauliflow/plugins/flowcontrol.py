@@ -21,7 +21,7 @@ class IfNode(FlowControlNode):
 
     def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
-            "condition": ArgSpec(type="str", required=True),
+            "condition": ArgSpec(type="expression", required=True),
             "child_if": ArgSpec(type="node", required=False, default=None),
             "child_else": ArgSpec(type="node", required=False, default=None),
         }
@@ -46,3 +46,70 @@ class IfNode(FlowControlNode):
             _logger.warning(f"{param} is invalid field")
 
         self.if_children[param] = child
+
+    DOCUMENTATION = r"""
+    short_description: Control flow with if-then-else construction.
+    description:
+      - Control flow with if-then-else construction.
+      - Run nodes of children followed child_if or child_else.
+      - When the flow of child_if or child_else is finished, then run children of if node.
+    parameters:
+      condition:
+        description:
+          - Zabbix server address.
+      child_if:
+        description:
+          - Zabbix server port.
+      child_else:
+        description:
+          - List of items or dict of item to send.
+          - "Item must have following keys: hostname, key, and value."
+    """
+
+    EXAMPLES = r"""
+# Print true if flowdata['cond'] is OK else print false.
+# Parent node can be set with parent field as <node name>.<field name>
+#     ┌─> true message  ─┐
+# if ─┤                  ├─> out
+#     └─> false message ─┘
+# Output: No output
+- if:
+    name: "if"
+    condition: "fd['cond'] == 'OK'"
+- message:
+    name: "true message"
+    msg: "true"
+    out_field: "message"
+    parent: "if.child_if"
+- message:
+    name: "false message"
+    msg: "false"
+    out_field: "message"
+    parent: "if.child_else"
+- stdout:
+    name: "out"
+    src: "{{ fd['message'] }}"
+    parent: "if"
+
+# This example behaves in the same way as the one above.
+#     ┌─> true message  ──> out true
+# if ─┤
+#     └─> false message ──> out false
+- if:
+    name: "if"
+    condition: "macro['cond'] == 'OK'"
+- message:
+    name: "true message"
+    msg: "true"
+    parent: "if.child_if"
+- stdout:
+    name: "out true"
+    src: "{{ fd['true message'] }}"
+- message:
+    name: "false message"
+    msg: "false"
+    parent: "if.child_else"
+- stdout:
+    name: "out false"
+    src: "{{ fd['false message'] }}"
+    """

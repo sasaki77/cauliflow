@@ -45,7 +45,7 @@ class Node(ABC):
             self.vars = self._make_vars(self.argument_spec, param_dict)
 
     @abstractmethod
-    async def process(self): ...
+    async def process(self) -> None: ...
 
     async def run(self) -> None:
         ctx_node.set(ContextNode(name=self.name))

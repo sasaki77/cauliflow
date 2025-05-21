@@ -24,3 +24,25 @@ class IntervalNode(TriggerNode):
                 continue
             last_time = datetime.now()
             await asyncio.sleep(time_difference)
+
+    DOCUMENTATION = r"""
+    short_description: Run child node at a regular interval.
+    description:
+      - Run child node at a regular interval
+    parameters:
+      interval:
+        description:
+          - Interval to run child node in second.
+    """
+
+    EXAMPLES = r"""
+# Run child node every second
+- interval:
+    name: "interval"
+    interval: 1.0
+
+# Run child node. Interval is set by macro.
+- interval:
+    name: "interval"
+    interval: "{{ macro['interval'] }}"
+    """
