@@ -2,7 +2,6 @@ from functools import singledispatchmethod
 
 from zabbix_utils import AsyncSender, AsyncZabbixAPI, ItemValue
 
-from cauliflow.context import ctx_flowdata
 from cauliflow.logging import get_logger
 from cauliflow.node import ArgSpec, ProcessNode, node
 
@@ -12,6 +11,7 @@ _logger = get_logger(__name__)
 @node.register("zabbix_get_item")
 class ZabbixGetItemNode(ProcessNode):
     def set_argument_spec(self) -> dict[str, ArgSpec]:
+        self.set_common_output_args()
         return {
             "url": ArgSpec(type="str", required=False, default="localhost"),
             "user": ArgSpec(type="str", required=False, default="root"),
@@ -29,9 +29,7 @@ class ZabbixGetItemNode(ProcessNode):
         )
 
         await self.api.logout()
-
-        fd = ctx_flowdata.get()
-        fd[self.name] = items
+        self.output(items)
 
 
 @node.register("zabbix_send")
