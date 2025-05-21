@@ -20,7 +20,7 @@ release = "0.1.0"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 
-extensions = ["myst_parser", "autodoc_cauliflow_node"]
+extensions = ["myst_parser", "cauliflow_node"]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
