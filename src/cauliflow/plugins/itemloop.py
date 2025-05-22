@@ -56,8 +56,8 @@ class ForList(ProcessNode):
         self.set_common_output_args()
         return {
             "lists": ArgSpec(type="list[list|dict]", required=True),
-            "expression": ArgSpec(type="str", required=True),
-            "filter": ArgSpec(type="str", required=False, default=None),
+            "expression": ArgSpec(type="expression", required=True),
+            "filter": ArgSpec(type="expression", required=False, default=None),
         }
 
     async def process(self) -> None:
@@ -161,9 +161,9 @@ class ForDict(ProcessNode):
         self.set_common_output_args()
         return {
             "lists": ArgSpec(type="list", required=True),
-            "key": ArgSpec(type="str", required=True),
-            "val": ArgSpec(type="str", required=True),
-            "filter": ArgSpec(type="str", required=False, default=None),
+            "key": ArgSpec(type="expression", required=True),
+            "val": ArgSpec(type="expression", required=True),
+            "filter": ArgSpec(type="expression", required=False, default=None),
         }
 
     async def process(self) -> None:
