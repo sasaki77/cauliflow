@@ -93,7 +93,6 @@ class ForList(ProcessNode):
                     continue
                 ret = variable.fetch(extend=var_dict)
                 items.append(ret)
-        print(items)
         return items
 
     @_for_loop.register
@@ -103,7 +102,7 @@ class ForList(ProcessNode):
         items = []
         for key, item in fordict.items():
             var_dict[f"item{i}_key"] = key
-            var_dict[f"item{i}_item"] = item
+            var_dict[f"item{i}_val"] = item
             if len(lists) > 0:
                 ret = self._for_loop(lists[0], i + 1, lists[1:], variable, var_dict)
                 items.extend(ret)

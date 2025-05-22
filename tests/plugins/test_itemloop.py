@@ -1,19 +1,28 @@
 import pytest
+
 from cauliflow.context import ctx_flowdata
 from cauliflow.plugins.itemloop import ForDict, ForList
 
 
 @pytest.mark.asyncio
-async def test_for_list(init_context_vars):
-    params = {
-        "lists": [[1, 2], [3, 4]],
-        "expression": "item0*item1",
-        "filter": "item0*item1>7",
-    }
+@pytest.mark.parametrize(
+    "lists, expression, filter, expected",
+    [
+        ([[1, 2], [3, 4]], "item0*item1", "item0*item1>7", [3, 4, 6]),
+        (
+            [["head1", "head2"], {"name1": "val1", "name2": "val2"}],
+            "item0+':'+item1_val",
+            None,
+            ["head1:val1", "head1:val2", "head2:val1", "head2:val2"],
+        ),
+    ],
+)
+async def test_for_list(init_context_vars, lists, expression, filter, expected):
+    params = {"lists": lists, "expression": expression, "filter": filter}
     node = ForList(name="node", param_dict=params)
     await node.run()
     flowdata = ctx_flowdata.get()
-    assert flowdata["node"] == [3, 4, 6]
+    assert flowdata["node"] == expected
 
 
 @pytest.mark.asyncio
