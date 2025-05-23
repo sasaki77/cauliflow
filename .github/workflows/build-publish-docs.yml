@@ -30,7 +30,7 @@ jobs:
       - name: Install the requirements
         run: uv sync --group docs
       - name: Build Sphinx Documentation
-        run: uv run -- sphinx-build -M html docs docs/_build
+        run: uv run sphinx-build -M html docs docs/_build
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
