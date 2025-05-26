@@ -1,4 +1,5 @@
 import pytest
+
 from cauliflow.blackboard import BlackBoard
 from cauliflow.context import ctx_blackboard, ctx_flowdata, ctx_macros
 from cauliflow.flowdata import FlowData
@@ -8,7 +9,7 @@ from cauliflow.variable import Variable
 
 @pytest.fixture
 def context_vars():
-    bb = BlackBoard({"bb1": "foo"})
+    bb = BlackBoard({"bb1": "foo", "dict": {"foo": "bar"}})
     fd = FlowData({"fd1": "bar"})
     macros = Macros({"mc1": "foobar"})
 
@@ -20,6 +21,7 @@ def context_vars():
 @pytest.mark.parametrize(
     "input,expected",
     [
+        # Basic expression
         ("", ""),
         ("''", "''"),
         ("{{ -1 }}", -1),
@@ -40,12 +42,24 @@ def context_vars():
         ("{{ None is not None }}", False),
         ("{{ (1+1)*(2-1)/2 }}", 1),
         ("{{ 0.1 + 0.1 }}", 0.2),
+        # Filters
+        ("{{ 'test' + 1 | str }}", "test1"),
+        ("{{ '1' | float }}", 1),
+        ("{{ '1' | float | int | str }}", "1"),
+        ("{{ {'key1': 1, 'key2': 2} | dict_keys() }}", ["key1", "key2"]),
+        ("{{ {'key1': 1, 'key2': 2} | dict_values }}", [1, 2]),
+        (
+            "{{ {'key1': 1, 'key2': 2} | dict2item('k','v') }}",
+            [{"k": "key1", "v": 1}, {"k": "key2", "v": 2}],
+        ),
+        # Variable
         ("{{ 'bb1' in bb }}", True),
         ("{{ 'bb1' not in bb }}", False),
         ("{{ bb['bb1'] + fd['fd1'] + '-' + macro['mc1'] }}", "foobar-foobar"),
         ("{{ bb['bb1'] }}bar-{{ macro['mc1'] }}", "foobar-foobar"),
         ("{{ bb['bb1'] }} bar-  {{ macro['mc1'] }}", "foobar-  foobar"),
         ("{{ bb['bb1'] + ' ' }} bar-  {{ macro['mc1'] }}", "foo bar-  foobar"),
+        ("{{ bb['dict'] | dict_keys }}", ["foo"]),
     ],
 )
 def test_variable(context_vars, input, expected):

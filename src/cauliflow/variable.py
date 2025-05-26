@@ -1,8 +1,10 @@
+from functools import partial
 from operator import contains
 from typing import Any
 
-from cauliflow.context import ctx_blackboard, ctx_flowdata, ctx_macros
 from lark import Lark, ParseTree, Transformer, Tree, v_args
+
+from cauliflow.context import ctx_blackboard, ctx_flowdata, ctx_macros
 
 _grammar = """
     start: (text | expression_wrapper)*
@@ -40,7 +42,14 @@ _grammar = """
         | product "/" atom_expr  -> div
 
     ?atom_expr: atom
-          | atom_expr "[" index "]"  -> getitem
+        | atom_expr "[" index "]"  -> getitem
+        | atom_expr "|" filter -> filter
+
+    filter: NAME [arguments_wrapper] -> filter_func
+
+    arguments_wrapper: "(" [arguments] ")" -> arguments_wrapper
+    arguments: [arg ("," arg)*] -> arguments
+    arg: expression -> arg
 
     ?index: expression
         | slice
@@ -48,15 +57,15 @@ _grammar = """
     slice: expression ":" expression
 
     ?atom: number
-         | "-" atom         -> neg
-         | NAME             -> var
-         | "True"           -> true
-         | "False"          -> false
-         | "None"           -> none
-         | string
-         | list
-         | dict
-         | "(" disjunction ")"
+        | "-" atom         -> neg
+        | NAME             -> var
+        | "True"           -> true
+        | "False"          -> false
+        | "None"           -> none
+        | string
+        | list
+        | dict
+        | "(" disjunction ")"
 
     ?number: INT    -> integer
         | FLOAT     -> float
@@ -147,6 +156,27 @@ class OperatorTree(Transformer):
     def not_contains(self, a: Any, b: Any) -> bool:
         return not contains(b, a)
 
+    def filter(self, a: Any, f: Any) -> Any:
+        return f(a)
+
+    def filter_func(self, name: Any, arguments: Any) -> Any:
+        filters = FILTERS
+        if name not in filters:
+            raise KeyError(f"{name} is not a valid filter")
+        f = filters[name]
+        if arguments is not None:
+            f = partial(f, *arguments)
+        return f
+
+    def arguments_wrapper(self, args) -> Any:
+        return args
+
+    def arguments(self, *args) -> Any:
+        return list(args)
+
+    def arg(self, a) -> Any:
+        return a
+
     def var(self, name: str) -> Any:
         try:
             return self.vars[name]
@@ -196,3 +226,31 @@ class Variable:
             if subtree.data == "var":
                 return True
         return False
+
+
+def _dict_keys(target: dict):
+    return list(target.keys())
+
+
+def _dict_values(target: dict):
+    return list(target.values())
+
+
+def _dict2item(key_name, val_name, target: dict | None = None):
+    if not isinstance(target, dict):
+        raise ValueError
+    dictlist = []
+    for k, v in target.items():
+        dictlist.append({key_name: k, val_name: v})
+    return dictlist
+
+
+FILTERS = {
+    "str": str,
+    "int": int,
+    "float": float,
+    "bool": bool,
+    "dict_keys": _dict_keys,
+    "dict_values": _dict_values,
+    "dict2item": _dict2item,
+}
