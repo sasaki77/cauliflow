@@ -1,0 +1,1 @@
+.. cauliflow-node:: out_file
