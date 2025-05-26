@@ -7,7 +7,7 @@ Node Plugins
    nodes/caget
    nodes/camonitor
    nodes/interval
-   nodes/input_csv
+   nodes/in_csv
    nodes/if
    nodes/dict_keys
    nodes/dict_values

@@ -14,7 +14,7 @@ class DataFormat(StrEnum):
     KEYVALUE = "key_value"
 
 
-@node.register("input_csv")
+@node.register("in_csv")
 class InputCSVNode(ProcessNode):
     def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
@@ -73,7 +73,7 @@ class InputCSVNode(ProcessNode):
 
 # Read the csv file as key_value and output it to blackboard
 # Output: {"csv": {'foo': 'John', 'bar': 'Tom'}}
-- input_csv:
+- in_csv:
     name: "csv"
     path: "./file.csv"
     format: "key_value"
@@ -81,14 +81,14 @@ class InputCSVNode(ProcessNode):
 
 # Read the csv file as dict
 # Output: {"csv": [{'id': 'foo', 'name': 'John'}, {'id': 'bar', 'name': 'Tom'}]}
-- input_csv:
+- in_csv:
     name: "csv"
     path: "./file.csv"
     format: "dict"
 
 # Read the csv file as dict
 # Output: {"csv": [["id", "name"], ["foo", "John"], ["bar", "Tom"]]}
-- input_csv:
+- in_csv:
     name: "csv"
     path: "./file.csv"
     format: "array"
