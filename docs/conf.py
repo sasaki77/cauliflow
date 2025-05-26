@@ -30,6 +30,14 @@ source_suffix = {
     ".md": "markdown",
 }
 
+html_context = {
+    "display_github": True,
+    "github_user": "sasaki77",
+    "github_repo": "cauliflow",
+    "github_version": "master/docs/",
+}
+
+github_doc_root = "https://github.com/sasaki77/cauliflow/master/doc/"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
