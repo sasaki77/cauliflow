@@ -1,3 +1,4 @@
+import time
 from functools import partial
 from operator import contains
 from typing import Any
@@ -245,11 +246,20 @@ def _dict2item(key_name, val_name, target: dict | None = None):
     return dictlist
 
 
+def _str_pvts(tstamp: float):
+    tstamp, frac = divmod(tstamp, 1)
+    return "%s.%5.5i" % (
+        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(tstamp)),
+        round(1.0e5 * frac),
+    )
+
+
 FILTERS = {
     "str": str,
     "int": int,
     "float": float,
     "bool": bool,
+    "str_pvts": _str_pvts,
     "dict_keys": _dict_keys,
     "dict_values": _dict_values,
     "dict2item": _dict2item,
