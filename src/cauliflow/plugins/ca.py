@@ -19,8 +19,16 @@ class CamonitorNode(TriggerNode):
             "pvname": ArgSpec(type="any", required=True),
         }
 
-    def onChanges(self, pvname=None, value=None, char_value=None, **kw):
-        data = {"pv": {"name": pvname, "value": char_value}}
+    def onChanges(
+        self, pvname=None, value=None, timestamp=None, status=None, severity=None, **kw
+    ):
+        data = {
+            "name": pvname,
+            "value": value,
+            "timestamp": timestamp,
+            "status": status,
+            "severity": severity,
+        }
         self.q.sync_q.put(data)
 
     async def process(self):
