@@ -27,4 +27,4 @@ Documentation
    introduction
    overview/index
    tutorials/index
-   nodes
+   nodes/index
