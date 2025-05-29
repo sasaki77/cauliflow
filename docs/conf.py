@@ -20,7 +20,7 @@ release = "0.1.0"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 
-extensions = ["myst_parser", "cauliflow_node"]
+extensions = ["myst_parser", "cauliflow_node", "sphinxcontrib.mermaid"]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
@@ -29,6 +29,8 @@ source_suffix = {
     ".rst": "restructuredtext",
     ".md": "markdown",
 }
+
+myst_heading_anchors = 2
 
 html_context = {
     "display_github": True,

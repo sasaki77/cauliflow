@@ -8,6 +8,7 @@ Node Plugins
    nodes/camonitor
    nodes/interval
    nodes/in_csv
+   nodes/out_file
    nodes/if
    nodes/dict_keys
    nodes/dict_values
