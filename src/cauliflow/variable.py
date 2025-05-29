@@ -41,6 +41,8 @@ _grammar = """
     ?product: atom_expr
         | product "*" atom_expr  -> mul
         | product "/" atom_expr  -> div
+        | product "//" atom_expr -> floor
+        | product "%" atom_expr  -> mod
 
     ?atom_expr: atom
         | atom_expr "[" index "]"  -> getitem
@@ -101,6 +103,7 @@ class OperatorTree(Transformer):
         is_not,
         le,
         lt,
+        mod,
         mul,
         ne,
         neg,
@@ -108,6 +111,7 @@ class OperatorTree(Transformer):
         or_,
         sub,
     )
+    from operator import floordiv as floor
     from operator import truediv as div
 
     float = float
