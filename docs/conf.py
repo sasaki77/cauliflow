@@ -20,7 +20,12 @@ release = "0.1.0"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 
-extensions = ["myst_parser", "cauliflow_node", "sphinxcontrib.mermaid"]
+extensions = [
+    "myst_parser",
+    "sphinxcontrib.mermaid",
+    "cauliflow_node",
+    "cauliflow_filters",
+]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]

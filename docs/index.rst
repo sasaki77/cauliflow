@@ -28,3 +28,4 @@ Documentation
    overview/index
    tutorials/index
    nodes/index
+   filters
