@@ -56,14 +56,13 @@ class IfNode(FlowControlNode):
     parameters:
       condition:
         description:
-          - Zabbix server address.
+          - The condition that determines the execution path in a conditional branch.
       child_if:
         description:
-          - Zabbix server port.
+          - Reference to the node to be processed if the condition parameter evaluates to True.
       child_else:
         description:
-          - List of items or dict of item to send.
-          - "Item must have following keys: hostname, key, and value."
+          - Reference to the node to be processed if the condition parameter evaluates to False.
     """
 
     EXAMPLES = r"""
