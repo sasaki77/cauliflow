@@ -1,4 +1,3 @@
-import time
 from functools import partial
 from operator import contains
 from typing import Any
@@ -6,6 +5,7 @@ from typing import Any
 from lark import Lark, ParseTree, Transformer, Tree, v_args
 
 from cauliflow.context import ctx_blackboard, ctx_flowdata, ctx_macros
+from cauliflow.filters import FILTERS
 
 _grammar = """
     start: (text | expression_wrapper)*
@@ -231,40 +231,3 @@ class Variable:
             if subtree.data == "var":
                 return True
         return False
-
-
-def _dict_keys(target: dict):
-    return list(target.keys())
-
-
-def _dict_values(target: dict):
-    return list(target.values())
-
-
-def _dict2item(key_name, val_name, target: dict | None = None):
-    if not isinstance(target, dict):
-        raise ValueError
-    dictlist = []
-    for k, v in target.items():
-        dictlist.append({key_name: k, val_name: v})
-    return dictlist
-
-
-def _str_pvts(tstamp: float):
-    tstamp, frac = divmod(tstamp, 1)
-    return "%s.%5.5i" % (
-        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(tstamp)),
-        round(1.0e5 * frac),
-    )
-
-
-FILTERS = {
-    "str": str,
-    "int": int,
-    "float": float,
-    "bool": bool,
-    "str_pvts": _str_pvts,
-    "dict_keys": _dict_keys,
-    "dict_values": _dict_values,
-    "dict2item": _dict2item,
-}
