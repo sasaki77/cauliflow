@@ -101,7 +101,9 @@ Note that when specifying the parent node, the name in the `name` parameter must
         parent: "B"
 ```
 
-The following is an example that uses an `if` node, which is categorized as a control node.
+Almost all nodes implicitly have a parameter called `child`. When only the node name is specified in the `parent` parameter, the reference is assigned to the `child` parameter of that node. If you want to assign a node to a parameter other than `child` in the control nodes, use the format `<node name>.<parameter>`.
+
+The following is an example that uses an `if` node, which is categorized as the control node.
 `if` node supports two special child nodes: `child_if` and `child_else`. If the `condition` parameter evaluates to True, the `child_if` node is processed; otherwise, the `child_else` node is processed. Once either of these branches completes, the standard `child` node is subsequently processed.
 
 ```yaml
