@@ -51,3 +51,8 @@ github_doc_root = "https://github.com/sasaki77/cauliflow/master/doc/"
 
 html_theme = "sphinx_rtd_theme"
 html_theme_path = ["sphinx_rtd_theme.get_html_theme_path()"]
+
+html_static_path = ["_static"]
+html_css_files = [
+    "css/custom.css",
+]
