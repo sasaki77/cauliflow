@@ -35,7 +35,7 @@ source_suffix = {
     ".md": "markdown",
 }
 
-myst_heading_anchors = 2
+myst_heading_anchors = 3
 
 html_context = {
     "display_github": True,

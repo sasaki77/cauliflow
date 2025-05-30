@@ -6,7 +6,7 @@ CauliFlow supports three types of key-value variables:
 - [Blackboard](#blackboard)
 - [Macros](#macros)
 
-Variables can be referenced in the flows file by enclosing them in double curly braces.
+Variables can be referenced in the [flows file](file.md) by enclosing them in double curly braces. For more details, please refer to [this page](file.md#variables).
 
 ## Flowdata
 

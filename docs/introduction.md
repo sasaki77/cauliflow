@@ -26,11 +26,11 @@ CauliFlow can run multiple flows either sequentially or concurrently.
 
 Each flow is composed of nodes. Each node performs a task corresponding to its type when it is processed. there are three categories of nodes:
 
-| Node Categories | Description                                                                                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Trigger Nodes   | These nodes enter an infinite loop when processed. Within this loop, whenever an event occurs, the node triggers the processing of its child node.                                             |
-| Process Nodes   | These nodes immediately perform their task when processed. After the task finishes, the node triggers the processing of its child node.                                                        |
-| Control Nodes   | These nodes act as control elements within a flow. They can have multiple child nodes and are used to manage the execution path of the flow — for example, to implement conditional branching. |
+| Node Categories                                  | Description                                                                                                                                                                                    |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Trigger Nodes](overview/nodes.md#trigger-nodes) | These nodes enter an infinite loop when processed. Within this loop, whenever an event occurs, the node triggers the processing of its child node.                                             |
+| [Process Nodes](overview/nodes.md#process-nodes) | These nodes immediately perform their task when processed. After the task finishes, the node triggers the processing of its child node.                                                        |
+| [Control Nodes](overview/nodes.md#control-nodes) | These nodes act as control elements within a flow. They can have multiple child nodes and are used to manage the execution path of the flow — for example, to implement conditional branching. |
 
 The nodes used in the example workflow are categorized as follows:
 
