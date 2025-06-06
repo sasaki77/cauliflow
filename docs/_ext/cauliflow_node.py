@@ -14,15 +14,21 @@ class CauliFlowNodeDirective(SphinxDirective):
         node_type = self.arguments[0]
         node = NodeFactory.get(node_type)
 
-        doc_data = None
+        doc_src = None
+        if node.__doc__ is not None:
+            doc_src = safe_load(node.__doc__)
+
+        doc_data = doc_src.get("DOCUMENTATION", None) if doc_src else None
         parameters = {}
-        if node.DOCUMENTATION is not None:
-            doc_data = safe_load(node.DOCUMENTATION)
+        if doc_data:
             parameters = doc_data["parameters"] if "parameters" in doc_data else {}
+
+        example = doc_src.get("EXAMPLE", None) if doc_src else None
 
         section = nodes.section()
         section["ids"].append(node_type)
         section += nodes.title(text=node_type)
+
         desc_txt = ""
         if doc_data is not None:
             desc_txt = doc_data.get("short_description", "No description")
@@ -35,7 +41,7 @@ class CauliFlowNodeDirective(SphinxDirective):
         desc = doc_data.get("description", None) if doc_data is not None else None
         section += create_desc_section(desc)
         section += create_param_section(instance.argument_spec, parameters)
-        section += create_examples_section(node.EXAMPLES)
+        section += create_examples_section(example)
 
         return [section]
 

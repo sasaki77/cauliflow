@@ -16,6 +16,49 @@ class DataFormat(StrEnum):
 
 @node.register("in_csv")
 class InputCSVNode(ProcessNode):
+    """
+    DOCUMENTATION:
+      short_description: Read csv file and output the data to flowdata or blackboard.
+      description:
+        - Read csv file and output the data to flowdata or blackboard.
+        - Output format can be chosen array, dict or key_value.
+      parameters:
+        path:
+          description:
+            - The path to the csv file to read.
+        format:
+          description:
+            - Output format.
+            - Choose array, dict or key_value.
+    EXAMPLE: |-
+      # Assume following csv file is located at "./file.csv"
+      # id, name
+      # foo, John
+      # bar, Tom
+
+      # Read the csv file as key_value and output it to blackboard
+      # Output: {"csv": {'foo': 'John', 'bar': 'Tom'}}
+      - in_csv:
+          name: "csv"
+          path: "./file.csv"
+          format: "key_value"
+          out_bb: yes
+
+      # Read the csv file as dict
+      # Output: {"csv": [{'id': 'foo', 'name': 'John'}, {'id': 'bar', 'name': 'Tom'}]}
+      - in_csv:
+          name: "csv"
+          path: "./file.csv"
+          format: "dict"
+
+      # Read the csv file as dict
+      # Output: {"csv": [["id", "name"], ["foo", "John"], ["bar", "Tom"]]}
+      - in_csv:
+          name: "csv"
+          path: "./file.csv"
+          format: "array"
+    """
+
     def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
@@ -49,47 +92,3 @@ class InputCSVNode(ProcessNode):
                 return csvdata
 
             _logger.warning(f"format:{format} is not matched")
-
-    DOCUMENTATION = r"""
-    short_description: Read csv file and output the data to flowdata or blackboard.
-    description:
-      - Read csv file and output the data to flowdata or blackboard.
-      - Output format can be chosen array, dict or key_value.
-    parameters:
-      path:
-        description:
-          - The path to the csv file to read.
-      format:
-        description:
-          - Output format.
-          - Choose array, dict or key_value.
-    """
-
-    EXAMPLES = r"""
-# Assume following csv file is located at "./file.csv"
-# id, name
-# foo, John
-# bar, Tom
-
-# Read the csv file as key_value and output it to blackboard
-# Output: {"csv": {'foo': 'John', 'bar': 'Tom'}}
-- in_csv:
-    name: "csv"
-    path: "./file.csv"
-    format: "key_value"
-    out_bb: yes
-
-# Read the csv file as dict
-# Output: {"csv": [{'id': 'foo', 'name': 'John'}, {'id': 'bar', 'name': 'Tom'}]}
-- in_csv:
-    name: "csv"
-    path: "./file.csv"
-    format: "dict"
-
-# Read the csv file as dict
-# Output: {"csv": [["id", "name"], ["foo", "John"], ["bar", "Tom"]]}
-- in_csv:
-    name: "csv"
-    path: "./file.csv"
-    format: "array"
-    """

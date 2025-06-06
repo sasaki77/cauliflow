@@ -6,6 +6,37 @@ from cauliflow.node import ArgSpec, ProcessNode, node
 
 @node.register("stdout")
 class OutNode(ProcessNode):
+    """
+    DOCUMENTATION:
+      short_description: Print data to stdout.
+      description:
+        - stdout node prints the data to the standart output
+      parameters:
+        src:
+          description:
+            - Data to print.
+            - If src is not set, the stdout node prints the flowdata.
+        pretty:
+          description:
+            - Enable pretty print.
+
+    EXAMPLE: |-
+      # Print flowdata to stdout
+      - stdout:
+          name: "stdout"
+
+      # Print "hello" to stdout
+      - stdout:
+          name: "stdout"
+          src: "hello"
+
+      # Pretty print the value of 'foo' field in the blackboard to stdout
+      - stdout:
+          name: "stdout"
+          src: "{{ bb.foo }}"
+          pretty: yes
+    """
+
     def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
             "src": ArgSpec(type="any", required=False, default=None),
@@ -22,34 +53,3 @@ class OutNode(ProcessNode):
             return
 
         print_func(src)
-
-    DOCUMENTATION = r"""
-    short_description: Print data to stdout.
-    description:
-      - stdout node prints the data to the standart output
-    parameters:
-      src:
-        description:
-          - Data to print.
-          - If src is not set, the stdout node prints the flowdata.
-      pretty:
-        description:
-          - Enable pretty print.
-    """
-
-    EXAMPLES = r"""
-# Print flowdata to stdout
-- stdout:
-    name: "stdout"
-
-# Print "hello" to stdout
-- stdout:
-    name: "stdout"
-    src: "hello"
-
-# Pretty print the value of 'foo' field in the blackboard to stdout
-- stdout:
-    name: "stdout"
-    src: "{{ bb.foo }}"
-    pretty: yes
-    """

@@ -10,6 +10,39 @@ _logger = get_logger(__name__)
 
 @node.register("zabbix_get_item")
 class ZabbixGetItemNode(ProcessNode):
+    """
+    DOCUMENTATION:
+      short_description: Get Zabbix item with Zabbix API
+      description:
+        - Get Zabbix item with Zabbix API
+      parameters:
+        url:
+          description:
+            - URL for Zabbix server
+        user:
+          description:
+            - User name for Zabbix API.
+        password:
+          description:
+            - Password for Zabbix API.
+        filter:
+          description:
+            - Filter to get the result mathed.
+        output:
+          description:
+            - Properties to be returned.
+    EXAMPLE: |-
+      # Get Zabbix items only matched Template EPICS
+      # Output: [{'key_': 'item.key1',  'name': 'foo, 'itemid': 1}]
+      - zabbix_get_item:
+          name: "zabbix_get"
+          url: "http:/localhost"
+          user: "Admin"
+          password: "Zabbix"
+          output: ["itemid", "name", "key_"]
+          filter: { "key_": null, "host": "Template EPICS" }
+    """
+
     def set_argument_spec(self) -> dict[str, ArgSpec]:
         self.set_common_output_args()
         return {
@@ -31,43 +64,43 @@ class ZabbixGetItemNode(ProcessNode):
         await self.api.logout()
         self.output(items)
 
-    DOCUMENTATION = r"""
-    short_description: Get Zabbix item with Zabbix API
-    description:
-      - Get Zabbix item with Zabbix API
-    parameters:
-      url:
-        description:
-          - URL for Zabbix server
-      user:
-        description:
-          - User name for Zabbix API.
-      password:
-        description:
-          - Password for Zabbix API.
-      filter:
-        description:
-          - Filter to get the result mathed.
-      output:
-        description:
-          - Properties to be returned.
-    """
-
-    EXAMPLES = r"""
-# Get Zabbix items only matched Template EPICS
-# Output: [{'key_': 'item.key1',  'name': 'foo, 'itemid': 1}]
-- zabbix_get_item:
-    name: "zabbix_get"
-    url: "http:/localhost"
-    user: "Admin"
-    password: "Zabbix"
-    output: ["itemid", "name", "key_"]
-    filter: { "key_": null, "host": "Template EPICS" }
-    """
-
 
 @node.register("zabbix_send")
 class ZabbixSend(ProcessNode):
+    """
+    DOCUMENTATION:
+      short_description: Send item values to a Zabbix server.
+      description:
+        - Send item values to a Zabbix server via Zabbix sender protocol.
+      parameters:
+        server:
+          description:
+            - Zabbix server address.
+        port:
+          description:
+            - Zabbix server port.
+        items:
+          description:
+            - List of items or dict of item to send.
+            - "Item must have following keys: hostname, key, and value."
+    EXAMPLE: |-
+      # Send two items to Zabbix server.
+      # Output: No output
+      - zabbix_send:
+          name: "zabbix_send"
+          server: "localhost"
+          port: 10051
+          items:
+            - {"hostname": "foo", "key": "bar", "val": 1}
+            - {"hostname": "foo", "key": "foobar", "val": 1}
+
+      # Send items from flowdata to Zabbix server.
+      # Output: No output
+      - zabbix_send:
+          name: "zabbix_send"
+          items: "{{ fd.zabbix_item }}"
+    """
+
     def set_argument_spec(self) -> dict[str, ArgSpec]:
         return {
             "server": ArgSpec(type="str", required=False, default="localhost"),
@@ -94,38 +127,3 @@ class ZabbixSend(ProcessNode):
             item_list.append(ItemValue(item["hostname"], item["key"], item["value"]))
 
         return item_list
-
-    DOCUMENTATION = r"""
-    short_description: Send item values to a Zabbix server.
-    description:
-      - Send item values to a Zabbix server via Zabbix sender protocol.
-    parameters:
-      server:
-        description:
-          - Zabbix server address.
-      port:
-        description:
-          - Zabbix server port.
-      items:
-        description:
-          - List of items or dict of item to send.
-          - "Item must have following keys: hostname, key, and value."
-    """
-
-    EXAMPLES = r"""
-# Send two items to Zabbix server.
-# Output: No output
-- zabbix_send:
-    name: "zabbix_send"
-    server: "localhost"
-    port: 10051
-    items:
-      - {"hostname": "foo", "key": "bar", "val": 1}
-      - {"hostname": "foo", "key": "foobar", "val": 1}
-
-# Send items from flowdata to Zabbix server.
-# Output: No output
-- zabbix_send:
-    name: "zabbix_send"
-    items: "{{ fd.zabbix_item }}"
-    """
