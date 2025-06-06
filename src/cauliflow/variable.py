@@ -45,8 +45,9 @@ _grammar = """
         | product "%" atom_expr  -> mod
 
     ?atom_expr: atom
-        | atom_expr "[" index "]"  -> getitem
-        | atom_expr "|" filter -> filter
+        | atom_expr "[" index "]" -> getitem
+        | atom_expr "." NAME      -> getitem
+        | atom_expr "|" filter    -> filter
 
     filter: NAME [arguments_wrapper] -> filter_func
 

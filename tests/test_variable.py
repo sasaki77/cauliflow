@@ -58,10 +58,13 @@ def context_vars():
         ("{{ 'bb1' in bb }}", True),
         ("{{ 'bb1' not in bb }}", False),
         ("{{ bb['bb1'] + fd['fd1'] + '-' + macro['mc1'] }}", "foobar-foobar"),
+        ("{{ bb.bb1 + fd.fd1 + '-' + macro.mc1 }}", "foobar-foobar"),
         ("{{ bb['bb1'] }}bar-{{ macro['mc1'] }}", "foobar-foobar"),
         ("{{ bb['bb1'] }} bar-  {{ macro['mc1'] }}", "foobar-  foobar"),
         ("{{ bb['bb1'] + ' ' }} bar-  {{ macro['mc1'] }}", "foo bar-  foobar"),
         ("{{ bb['dict'] | dict_keys }}", ["foo"]),
+        ("{{ bb.dict.foo }}", "bar"),
+        ("{{ bb.dict['foo'] }}", "bar"),
     ],
 )
 def test_variable(context_vars, input, expected):
