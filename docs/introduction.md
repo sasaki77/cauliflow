@@ -65,21 +65,21 @@ sequential:
       flow:
         - in_csv:
             name: "csv"
-            path: "{{ macro['csv_path'] }}"
+            path: "{{ macro.csv_path }}"
             format: "key_value"
             out_bb: yes
     - name: "flow2"
       flow:
         - camonitor:
             name: "ca"
-            pvname: "{{ bb['csv'] | dict_keys }}"
+            pvname: "{{ bb.csv | dict_keys }}"
         - if:
             name: "if"
-            condition: "fd['ca']['value'] > bb['csv'][fd['ca']['name']] | float"
+            condition: "fd.ca.value > bb.csv[fd.ca.name] | float"
         - out_file:
             name: "out"
             path: "out.txt"
-            src: "{{ fd['ca']['timestamp'] | str_pvts + ' ' + fd['ca']['name'] + ' ' + fd['ca']['value'] | str }}"
+            src: "{{ fd.ca.timestamp | str_pvts + ' ' + fd.ca.name + ' ' + fd.ca.value | str }}"
             parent: "if.child_if"
 macros:
   csv_path: "test.csv"

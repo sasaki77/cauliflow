@@ -6,6 +6,7 @@ Create a file named `increment.yml`, write the following content into it.
 
 ```yaml
 ---
+---
 sequential:
   flows:
     - name: "init"
@@ -18,20 +19,22 @@ sequential:
       flow:
         - interval:
             name: "interval"
-            interval: "{{ macro['interval'] | float }}"
+            interval: "{{ macro.interval | float }}"
         - message:
             name: "add"
-            msg: "{{ bb['increment'] + 1 }}"
+            msg: "{{ bb.increment + 1 }}"
             out_bb: yes
             out_field: "increment"
         - message:
             name: "out_msg"
-            msg: "{{ 'Count: ' + bb['increment'] | str }}"
+            msg: "{{ 'Count: ' + bb.increment | str }}"
         - stdout:
             name: "out"
-            src: "{{ fd['out_msg'] }}"
+            src: "{{ fd.out_msg }}"
 macros:
   interval: "1"
+
+
 ```
 
 In the above flows, two flows are executed sequentially.

@@ -163,14 +163,17 @@ Variables stores values of arbitrary data types in a key-value dictionary struct
 The following are examples of how to reference each variable.
 
 ```yaml
-# Access the value of 'key1' from the flowdata.
+# Access the value of 'key1' from the flowdata with dot (.) access.
+item: "{{ fd.key1 }}"
+
+# Access the value of 'key1' from the flowdata with subscript syntax ([]).
 item: "{{ fd['key1'] }}"
 
 # Access the value of 'name' from the dictionary stored under the 'key2' in the blackboard.
-item: "{{ bb['key2']['name'] }}"
+item: "{{ bb.key2.name }}"
 
 # Access the value of 'head' from the macros.
-item: "{{ macro['head']] }}"
+item: "{{ macro.head }}"
 ```
 
 ### Filters
