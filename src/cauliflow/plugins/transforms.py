@@ -41,7 +41,7 @@ class DictKeysNode(ProcessNode):
 # Output: {'keys': ['key1', 'key2']}
 - dict_keys:
     name: "keys"
-    input: "{{ flowdata['dict_data'] }}"
+    input: "{{ fd.dict_data }}"
 
 # Output the list of the keys in dict to blackboard.
 # Output: {'foo': ['key1', 'key2']}
@@ -92,7 +92,7 @@ class DictValuesNode(ProcessNode):
 # Output: {'values': ['foo', 'bar']}
 - dict_values:
     name: "values"
-    input: "{{ flowdata['dict_data'] }}"
+    input: "{{ fd.dict_data }}"
 
 # Output the list of the values in dict to blackboard.
 # Output: {'foo': [1, 2]}

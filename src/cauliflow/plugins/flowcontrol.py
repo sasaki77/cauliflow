@@ -74,7 +74,7 @@ class IfNode(FlowControlNode):
 # Output: No output
 - if:
     name: "if"
-    condition: "fd['cond'] == 'OK'"
+    condition: "fd.cond == 'OK'"
 - message:
     name: "true message"
     msg: "true"
@@ -87,7 +87,7 @@ class IfNode(FlowControlNode):
     parent: "if.child_else"
 - stdout:
     name: "out"
-    src: "{{ fd['message'] }}"
+    src: "{{ fd.message }}"
     parent: "if"
 
 # This example behaves in the same way as the one above.
@@ -96,7 +96,7 @@ class IfNode(FlowControlNode):
 #     └─> false message ──> out false
 - if:
     name: "if"
-    condition: "macro['cond'] == 'OK'"
+    condition: "macro.cond == 'OK'"
 - message:
     name: "true message"
     msg: "true"

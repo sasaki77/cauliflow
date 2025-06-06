@@ -50,6 +50,6 @@ class OutNode(ProcessNode):
 # Pretty print the value of 'foo' field in the blackboard to stdout
 - stdout:
     name: "stdout"
-    src: "{{ bb['foo'] }}"
+    src: "{{ bb.foo }}"
     pretty: yes
     """

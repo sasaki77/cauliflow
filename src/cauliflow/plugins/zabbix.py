@@ -127,5 +127,5 @@ class ZabbixSend(ProcessNode):
 # Output: No output
 - zabbix_send:
     name: "zabbix_send"
-    items: "fd['zabbix_item']"
+    items: "{{ fd.zabbix_item }}"
     """

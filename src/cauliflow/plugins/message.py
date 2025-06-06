@@ -29,7 +29,7 @@ class MessageNode(ProcessNode):
 # Output the value of 'foo' field in the blackboard to the flowdata["msg"]
 - message:
     name: "msg"
-    msg: "{{ bb['foo'] }}"
+    msg: "{{ bb.foo }}"
 
 # Output "hello" to the flowdata["field"]
 - message:

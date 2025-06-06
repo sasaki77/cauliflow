@@ -44,5 +44,5 @@ class OutFileNode(ProcessNode):
 - out_file:
     name: "out"
     path: "./test.txt"
-    src: "{{ bb['csv'] }}"
+    src: "{{ bb.csv }}"
     """

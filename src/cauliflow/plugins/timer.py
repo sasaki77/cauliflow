@@ -44,5 +44,5 @@ class IntervalNode(TriggerNode):
 # Run child node. Interval is set by macro.
 - interval:
     name: "interval"
-    interval: "{{ macro['interval'] }}"
+    interval: "{{ macro.interval }}"
     """
