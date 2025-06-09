@@ -3,6 +3,19 @@ revision = 2
 requires-python = ">=3.11"
 
 [[package]]
+name = "aioca"
+version = "1.8.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "epicscorelibs" },
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b8/a3/abbb3180c518d35eeecea346bfdf04726366c2bdbf4eab44f2f62fc17248/aioca-1.8.1.tar.gz", hash = "sha256:463e2298cb22e00f8ca9fe6ce7bb6b80edb9225cc62e645590a70f3e05d91487", size = 58825, upload-time = "2024-11-01T15:59:28.653Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5b/08/185c3b29b0698328b202e6c965c23187e2e29ead78cb468aab0a09ee97fc/aioca-1.8.1-py3-none-any.whl", hash = "sha256:b856b68c4722387bc88917c10f71f87b7e74d95a28581187b6577682a6c68909", size = 26538, upload-time = "2024-11-01T15:59:27.438Z" },
+]
+
+[[package]]
 name = "aiofiles"
 version = "24.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -138,11 +151,11 @@ name = "cauliflow"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "aioca" },
     { name = "aiofiles" },
     { name = "click" },
     { name = "janus" },
     { name = "lark" },
-    { name = "pyepics" },
     { name = "pyyaml" },
     { name = "zabbix-utils", extra = ["async"] },
 ]
@@ -163,11 +176,11 @@ docs = [
 
 [package.metadata]
 requires-dist = [
+    { name = "aioca", specifier = ">=1.8.1" },
     { name = "aiofiles", specifier = ">=24.1.0" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "janus", specifier = ">=2.0.0" },
     { name = "lark", specifier = ">=1.2.2" },
-    { name = "pyepics", specifier = ">=3.5.7" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "zabbix-utils", extras = ["async"], specifier = ">=2.0.2" },
 ]
@@ -289,6 +302,25 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ae/ed/aefcc8cd0ba62a0560c3c18c33925362d46c6075480bfa4df87b28e169a9/docutils-0.21.2.tar.gz", hash = "sha256:3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f", size = 2204444, upload-time = "2024-04-23T18:57:18.24Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8f/d7/9322c609343d929e75e7e5e6255e614fcc67572cfd083959cdef3b7aad79/docutils-0.21.2-py3-none-any.whl", hash = "sha256:dafca5b9e384f0e419294eb4d2ff9fa826435bf15f15b7bd45723e8ad76811b2", size = 587408, upload-time = "2024-04-23T18:57:14.835Z" },
+]
+
+[[package]]
+name = "epicscorelibs"
+version = "7.0.7.99.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "setuptools" },
+    { name = "setuptools-dso" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4a/18/3853de30cc92c164eccff6e62599ef88d0aa3b64740973b63e13f88145de/epicscorelibs-7.0.7.99.1.1.tar.gz", hash = "sha256:f9dd2c01913cf13959e882c7c2afccd5d55cd5084bd4597201ea119f65752231", size = 1589906, upload-time = "2024-09-30T13:25:03.289Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/64/69/db29f8a2c91608d4d8d4c553d2f9a1cf836ad8ba4bcd3eaa2e84b5a2f1dd/epicscorelibs-7.0.7.99.1.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:390e0912d47e354748da858fae348079c854bea02202b6aa5c63b7487de54dbc", size = 7769298, upload-time = "2024-09-30T13:25:27.837Z" },
+    { url = "https://files.pythonhosted.org/packages/89/05/defd9300c637d4d15797a90345a178672dcb44d8f02fb1985685454f3807/epicscorelibs-7.0.7.99.1.1-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:6343b2e76bd95eb3a7a2bf493cbf21620657aeb30bec9d775887e13552238bf5", size = 5376275, upload-time = "2024-09-30T13:23:20.544Z" },
+    { url = "https://files.pythonhosted.org/packages/24/82/7b6256bec65db91e06c3a8d5f83a5d63459e9e89353a75142fb8df2a1296/epicscorelibs-7.0.7.99.1.1-cp311-cp311-win_amd64.whl", hash = "sha256:b6ec9691a9879764f5a33591982c15449ba1eabd1755dd36be3e7096ce80aa03", size = 2491799, upload-time = "2024-09-30T13:29:07.118Z" },
+    { url = "https://files.pythonhosted.org/packages/72/48/650f76f3f5361f2f0c42b342ae00b75e67b8c9c24ea5796cabce47d2b7d3/epicscorelibs-7.0.7.99.1.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:dd89c5e0d7dd72cb6429f7d192be42d85e00e483c8ef192ad30e39cd195713b9", size = 7769231, upload-time = "2024-09-30T13:30:09.648Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/a5/70302709136950f4be2c4687052ccdfbb10b53ad3ddf4c71b06acaef6e51/epicscorelibs-7.0.7.99.1.1-cp312-cp312-manylinux2014_x86_64.whl", hash = "sha256:a43debd51cd92d5bf6333388d500f7ea57bf9468a9345b858fdd49ba150a8e07", size = 5377976, upload-time = "2024-09-30T13:23:15.155Z" },
+    { url = "https://files.pythonhosted.org/packages/03/ea/36777049e0fb2b90ae2c67d9fc973af2efb59930192c7d32df08988df3d8/epicscorelibs-7.0.7.99.1.1-cp312-cp312-win_amd64.whl", hash = "sha256:e1d27bbe5aee93d12e86bd72f0674cc999b43237720d61ac3cc4c905429a6004", size = 2491828, upload-time = "2024-09-30T13:28:24.789Z" },
 ]
 
 [[package]]
@@ -758,35 +790,12 @@ wheels = [
 ]
 
 [[package]]
-name = "pyepics"
-version = "3.5.7"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy" },
-    { name = "pyparsing" },
-    { name = "setuptools" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d8/0e/300142a24b670caa51c371e271467f0cab4b8c3fb261f0b5c2af1fd627a3/pyepics-3.5.7.tar.gz", hash = "sha256:be3fd878171a66fba42bf4051404b12b36ded8a448ac1894f0f81c9f2b330d7f", size = 6156481, upload-time = "2024-08-26T17:51:11.088Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/56/3e/3160a20c7f4ef55228cfa35e53a5ff7339a3279a47b326e53579d53a6704/pyepics-3.5.7-py3-none-any.whl", hash = "sha256:c2ffbeae56f6dff5e5ee0a11fa18b7deb00c8ce59daabab0055a05ddfb8abf55", size = 5335642, upload-time = "2024-08-26T17:51:08.867Z" },
-]
-
-[[package]]
 name = "pygments"
 version = "2.19.1"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7c/2d/c3338d48ea6cc0feb8446d8e6937e1408088a72a39937982cc6111d17f84/pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f", size = 4968581, upload-time = "2025-01-06T17:26:30.443Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8a/0b/9fcc47d19c48b59121088dd6da2488a49d5f72dacf8262e2790a1d2c7d15/pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c", size = 1225293, upload-time = "2025-01-06T17:26:25.553Z" },
-]
-
-[[package]]
-name = "pyparsing"
-version = "3.2.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/bb/22/f1129e69d94ffff626bdb5c835506b3a5b4f3d070f17ea295e12c2c6f60f/pyparsing-3.2.3.tar.gz", hash = "sha256:b9c13f1ab8b3b542f72e28f634bad4de758ab3ce4546e4301970ad6fa77c38be", size = 1088608, upload-time = "2025-03-25T05:01:28.114Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/05/e7/df2285f3d08fee213f2d041540fa4fc9ca6c2d44cf36d3a035bf2a8d2bcc/pyparsing-3.2.3-py3-none-any.whl", hash = "sha256:a749938e02d6fd0b59b356ca504a24982314bb090c383e3cf201c95ef7e2bfcf", size = 111120, upload-time = "2025-03-25T05:01:24.908Z" },
 ]
 
 [[package]]
@@ -894,6 +903,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/bb/71/b6365e6325b3290e14957b2c3a804a529968c77a049b2ed40c095f749707/setuptools-79.0.1.tar.gz", hash = "sha256:128ce7b8f33c3079fd1b067ecbb4051a66e8526e7b65f6cec075dfc650ddfa88", size = 1367909, upload-time = "2025-04-23T22:20:59.241Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0d/6d/b4752b044bf94cb802d88a888dc7d288baaf77d7910b7dedda74b5ceea0c/setuptools-79.0.1-py3-none-any.whl", hash = "sha256:e147c0549f27767ba362f9da434eab9c5dc0045d5304feb602a0af001089fc51", size = 1256281, upload-time = "2025-04-23T22:20:56.768Z" },
+]
+
+[[package]]
+name = "setuptools-dso"
+version = "2.12.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "setuptools" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/36/ed/931a2b72f0403dc0f24180df21fef3ca773c70535249b4e3ade188b7b918/setuptools_dso-2.12.2.tar.gz", hash = "sha256:7afb76f93d13ce9da24502676d8f2d4dbc3da35c6245f95f27df9fa7445079a4", size = 21230, upload-time = "2025-03-21T16:08:34.979Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b9/36/c101788fad13e8ea65c5b3d3dee8ff996500800cd554ae6ff72143690247/setuptools_dso-2.12.2-py2.py3-none-any.whl", hash = "sha256:deb786b1cfac92f252a82df38e5129b1d9341b36885a01f64543bf3500734a21", size = 23756, upload-time = "2025-03-21T16:08:34.006Z" },
 ]
 
 [[package]]
