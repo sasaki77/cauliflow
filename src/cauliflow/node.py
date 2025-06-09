@@ -48,12 +48,18 @@ class Node(ABC):
     async def process(self) -> None: ...
 
     async def run(self) -> None:
+        await self._run_self()
+        await self._run_child()
+
+    async def _run_self(self) -> None:
         ctx_node.set(ContextNode(name=self.name))
         self._fetch_params()
         await self.process()
         flows = ctx_flows.get()
         if flows.debug:
             _log_debug()
+
+    async def _run_child(self) -> None:
         if self.child is None:
             return
         await self.child.run()
