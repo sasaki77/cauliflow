@@ -1,0 +1,5 @@
+record(longout, "$(head):LONGOUT") {
+}
+record(ao, "$(head):AO") {
+}
+
