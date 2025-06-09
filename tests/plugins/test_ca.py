@@ -4,14 +4,14 @@ import sys
 from pathlib import Path
 
 import pytest
-from aioca import caput, purge_channel_caches
+from aioca import caget, caput, purge_channel_caches
 
 from cauliflow.context import ctx_blackboard, ctx_flowdata
-from cauliflow.plugins.ca import CagetNode, CamonitorNode
+from cauliflow.plugins.ca import CagetNode, CamonitorNode, CaputNode
 from cauliflow.plugins.message import MessageNode
 
 SOFT_RECORDS = str(Path(__file__).parent / "ca_records.db")
-PREFIX = "ET_SASAKi"
+PREFIX = "ET_SASAKI"
 
 
 @pytest.fixture
@@ -113,6 +113,85 @@ async def test_caget_ok_list(ioc, init_context_vars):
 async def test_caget_ng(ioc, init_context_vars):
     pvname = "JOHN_DOE"
     node = CagetNode(name="node", param_dict={"pvname": pvname, "timeout": 0.1})
+
+    await node.run()
+
+    flowdata = ctx_flowdata.get()
+    data = flowdata["node"]
+
+    assert data["name"] == pvname
+    assert data["ok"] is False
+
+
+@pytest.mark.asyncio
+async def test_caput_ok(ioc, init_context_vars):
+    pvname = f"{PREFIX}:LONGOUT"
+    val = 10
+    node = CaputNode(name="node", param_dict={"pvname": pvname, "value": val})
+
+    await node.run()
+
+    flowdata = ctx_flowdata.get()
+    data = flowdata["node"]
+
+    assert data["name"] == pvname
+    assert data["ok"] is True
+
+    get_val = await caget(pvname)
+
+    assert get_val == val
+
+
+@pytest.mark.asyncio
+async def test_caput_list(ioc, init_context_vars):
+    pvlist = [f"{PREFIX}:LONGOUT", f"{PREFIX}:AO"]
+    values = [1, 2]
+    node = CaputNode(name="node", param_dict={"pvname": pvlist, "value": values})
+
+    await node.run()
+
+    get_vals = await caget(pvlist)
+
+    flowdata = ctx_flowdata.get()
+    data = flowdata["node"]
+
+    assert len(data) == 2
+    for d, pv, name, v in zip(data, get_vals, pvlist, values):
+        assert d["name"] == name
+        assert d["ok"] is True
+        assert pv == v
+
+
+@pytest.mark.asyncio
+async def test_caput_list_with_repeat(ioc, init_context_vars):
+    pvlist = [f"{PREFIX}:LONGOUT", f"{PREFIX}:AO"]
+    value = 10
+    node = CaputNode(
+        name="node",
+        param_dict={"pvname": pvlist, "value": value, "repeat_value": True},
+    )
+
+    await node.run()
+
+    get_vals = await caget(pvlist)
+
+    flowdata = ctx_flowdata.get()
+    data = flowdata["node"]
+
+    assert len(data) == 2
+    for d, pv, name in zip(data, get_vals, pvlist):
+        assert d["name"] == name
+        assert d["ok"] is True
+        assert pv == value
+
+
+@pytest.mark.asyncio
+async def test_caput_ng(ioc, init_context_vars):
+    pvname = "JOHN_DOE"
+    val = 10
+    node = CaputNode(
+        name="node", param_dict={"pvname": pvname, "value": val, "timeout": 1}
+    )
 
     await node.run()
 

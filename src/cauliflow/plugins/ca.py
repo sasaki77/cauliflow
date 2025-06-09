@@ -1,7 +1,7 @@
 from functools import singledispatch
 
 import janus
-from aioca import caget, camonitor
+from aioca import caget, camonitor, caput
 
 from cauliflow.context import ctx_flowdata, init_flowdata
 from cauliflow.node import ArgSpec, ProcessNode, TriggerNode, node
@@ -19,12 +19,12 @@ class CamonitorNode(TriggerNode):
           description:
             - A pvname or a list of pvname.
     EXAMPLE: |-
-      # Get single pv data.
+      # Monitor single pv data.
       # Output: {'name': 'TEST:PV1', 'value': 7.0, 'timestamp': 1749196716.822903, 'status': 0, 'severity': 0, 'ok': True}
       - camonitor:
           pvname: "TEST:PV1"
 
-      # Get list of pv data.
+      # Monitor list of pv data.
       # Output: {'name': 'TEST:PV1', 'value': 7.0, 'timestamp': 1749196716.822903, 'status': 0, 'severity': 0, 'ok': True}
       - camonitor:
           pvname: ["TEST:PV1", "TEST:PV2"]
@@ -140,6 +140,101 @@ class CagetNode(ProcessNode):
 
         if is_single:
             out = out[0]
+
+        fd = ctx_flowdata.get()
+        fd[self.name] = out
+
+
+@node.register("caput")
+class CaputNode(ProcessNode):
+    """
+    DOCUMENTATION:
+      short_description: Put values to EPICS PV(s).
+      description:
+        - Put values to EPICS PV(s).
+      parameters:
+        pvname:
+          description:
+            - A pvname or a list of pvname.
+        value:
+          description:
+            - A value or a list of value.
+        repeat_value:
+          description:
+            - Put the same value to every PV if True.
+        timeout:
+          description:
+            - Wait time.
+    EXAMPLE: |-
+      # Put to a single PV.
+      # Output: {'name': 'TEST:PV1', 'ok': True}
+      - caput:
+          pvname: "TEST:PV1"
+          value: 1.0
+
+      # Put 1 to TEST:PV1 and 2 to TEST:PV2.
+      # Output: [
+      #  {'name': 'TEST:PV1', 'ok': True}
+      #  {'name': 'TEST:PV2', 'ok': True}
+      # ]
+      - caput:
+          pvname: ["TEST:PV1", "TEST:PV2"]
+          value: [1.0, 2.0]
+
+      # Put 1 to TEST:PV1 and TEST:PV2 with repeat_value.
+      # Output: [
+      #  {'name': 'TEST:PV1', 'ok': True}
+      #  {'name': 'TEST:PV2', 'ok': True}
+      # ]
+      - caput:
+          pvname: ["TEST:PV1", "TEST:PV2"]
+          value: 1.0
+          repeat_value: yes
+
+      # Put to a single pv data with timeout.
+      # Timeout Output: {'name': 'TEST:PV1', 'ok': False}
+      - caput:
+          pvname: "TEST:PV1"
+          value: 1.0
+          timeout: 1.0
+    """
+
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
+        return {
+            "pvname": ArgSpec(type="str|list[str]", required=True),
+            "value": ArgSpec(type="Any|list[Any]", required=True),
+            "repeat_value": ArgSpec(type="bool", required=False),
+            "timeout": ArgSpec(type="float", required=False, default=5.0),
+        }
+
+    async def process(self):
+        pvnames = self.params["pvname"]
+        is_single = isinstance(pvnames, str)
+
+        vals = None
+        if is_single:
+            vals = await caput(
+                pvnames,
+                self.params["value"],
+                wait=True,
+                timeout=self.params["timeout"],
+                throw=False,
+            )
+        else:
+            vals = await caput(
+                pvnames,
+                self.params["value"],
+                repeat_value=self.params["repeat_value"],
+                wait=True,
+                timeout=self.params["timeout"],
+                throw=False,
+            )
+
+        out = None
+        if is_single:
+            out = {"name": vals.name, "ok": vals.ok}
+        else:
+            out = [{"name": val.name, "ok": val.ok} for val in vals]
 
         fd = ctx_flowdata.get()
         fd[self.name] = out
