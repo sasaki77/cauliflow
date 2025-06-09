@@ -1,7 +1,8 @@
 from functools import singledispatch
+from typing import cast
 
 import janus
-from aioca import caget, camonitor, caput
+from aioca import CANothing, caget, camonitor, caput
 
 from cauliflow.context import ctx_flowdata, init_flowdata
 from cauliflow.node import ArgSpec, ProcessNode, TriggerNode, node
@@ -232,8 +233,10 @@ class CaputNode(ProcessNode):
 
         out = None
         if is_single:
+            vals = cast(CANothing, vals)
             out = {"name": vals.name, "ok": vals.ok}
         else:
+            vals = cast(list[CANothing], vals)
             out = [{"name": val.name, "ok": val.ok} for val in vals]
 
         fd = ctx_flowdata.get()
