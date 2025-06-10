@@ -67,50 +67,55 @@ class ForList(ProcessNode):
 
         lists = self.params["lists"]
         var_dict = {}
-        items = self._for_loop(lists[0], 0, lists[1:], self.variable, var_dict)
+        items = self._for_loop(lists[0], 0, lists[1:], var_dict)
         self.output(items)
 
     @singledispatchmethod
     def _for_loop(
-        self, item, i: int, lists: list, variable: Variable, var_dict: dict
+        self, iterable, depth: int, remaining_lists: list, var_dict: dict
     ) -> list:
-        _logger.critical("lists must be list or dict")
+        _logger.critical("Input must be a list or dict")
         return []
 
     @_for_loop.register
     def _(
-        self, forlist: list, i: int, lists: list, variable: Variable, var_dict: dict
+        self, for_list: list, depth: int, remaining_lists: list, var_dict: dict
     ) -> list:
-        items = []
-        for item in forlist:
-            var_dict[f"item{i}"] = item
-            if len(lists) > 0:
-                ret = self._for_loop(lists[0], i + 1, lists[1:], variable, var_dict)
-                items.extend(ret)
-            else:
-                if self.filter is not None and self.filter.fetch(extend=var_dict):
-                    continue
-                ret = variable.fetch(extend=var_dict)
-                items.append(ret)
-        return items
+        self._validate_variable()
+
+        results = []
+        for item in for_list:
+            var_dict[f"item{depth}"] = item
+            results.extend(self._process_next_level(depth, remaining_lists, var_dict))
+        return results
 
     @_for_loop.register
     def _(
-        self, fordict: dict, i: int, lists: list, variable: Variable, var_dict: dict
+        self, for_dict: dict, depth: int, remaining_lists: list, var_dict: dict
     ) -> list:
-        items = []
-        for key, item in fordict.items():
-            var_dict[f"item{i}_key"] = key
-            var_dict[f"item{i}_val"] = item
-            if len(lists) > 0:
-                ret = self._for_loop(lists[0], i + 1, lists[1:], variable, var_dict)
-                items.extend(ret)
-            else:
-                if self.filter is not None and self.filter.fetch(extend=var_dict):
-                    continue
-                ret = variable.fetch(extend=var_dict)
-                items.append(ret)
-        return items
+        self._validate_variable()
+
+        results = []
+        for key, value in for_dict.items():
+            var_dict[f"item{depth}_key"] = key
+            var_dict[f"item{depth}_val"] = value
+            results.extend(self._process_next_level(depth, remaining_lists, var_dict))
+        return results
+
+    def _process_next_level(
+        self, depth: int, remaining_lists: list, var_dict: dict
+    ) -> list:
+        if remaining_lists:
+            return self._for_loop(
+                remaining_lists[0], depth + 1, remaining_lists[1:], var_dict
+            )
+        if self.filter and self.filter.fetch(extend=var_dict):
+            return []
+        return [self.variable.fetch(extend=var_dict)]  # type: ignore
+
+    def _validate_variable(self):
+        if self.variable is None:
+            raise ValueError("Variable is not set.")
 
 
 @node.register("for_dict")
@@ -174,61 +179,54 @@ class ForDict(ProcessNode):
 
         lists = self.params["lists"]
         var_dict = {}
-        items = self._for_loop(lists[0], 0, lists[1:], self.key, self.val, var_dict)
+        items = self._for_loop(lists[0], 0, lists[1:], var_dict)
         self.output(items)
 
     @singledispatchmethod
     def _for_loop(
-        self, item, i: int, lists: list, key: Variable, val: Variable, var_dict: dict
+        self, iterable, depth: int, remaining_lists: list, var_dict: dict
     ) -> dict:
-        _logger.critical("lists must be list or dict")
+        _logger.critical("Input must be a list or dict")
         return {}
 
     @_for_loop.register
     def _(
-        self,
-        forlist: list,
-        i: int,
-        lists: list,
-        key: Variable,
-        val: Variable,
-        var_dict: dict,
+        self, for_list: list, depth: int, remaining_lists: list, var_dict: dict
     ) -> dict:
-        items = {}
-        for item in forlist:
-            var_dict[f"item{i}"] = item
-            if len(lists) > 0:
-                ret = self._for_loop(lists[0], i + 1, lists[1:], key, val, var_dict)
-                items.update(ret)
-            else:
-                if self.filter is not None and self.filter.fetch(extend=var_dict):
-                    continue
-                _key = key.fetch(extend=var_dict)
-                _val = val.fetch(extend=var_dict)
-                items[_key] = _val
-        return items
+        self._validate_variable()
+
+        results = {}
+        for item in for_list:
+            var_dict[f"item{depth}"] = item
+            results.update(self._process_next_level(depth, remaining_lists, var_dict))
+        return results
 
     @_for_loop.register
     def _(
-        self,
-        fordict: dict,
-        i: int,
-        lists: list,
-        key: Variable,
-        val: Variable,
-        var_dict: dict,
+        self, for_dict: dict, depth: int, remaining_lists: list, var_dict: dict
     ) -> dict:
-        items = {}
-        for ikey, ival in fordict.items():
-            var_dict[f"item{i}_key"] = ikey
-            var_dict[f"item{i}_val"] = ival
-            if len(lists) > 0:
-                ret = self._for_loop(lists[0], i + 1, lists[1:], key, val, var_dict)
-                items.update(ret)
-            else:
-                if self.filter is not None and self.filter.fetch(extend=var_dict):
-                    continue
-                _key = key.fetch(extend=var_dict)
-                _val = val.fetch(extend=var_dict)
-                items[_key] = _val
-        return items
+        self._validate_variable()
+
+        results = {}
+        for key, value in for_dict.items():
+            var_dict[f"item{depth}_key"] = key
+            var_dict[f"item{depth}_val"] = value
+            results.update(self._process_next_level(depth, remaining_lists, var_dict))
+        return results
+
+    def _process_next_level(
+        self, depth: int, remaining_lists: list, var_dict: dict
+    ) -> dict:
+        if remaining_lists:
+            return self._for_loop(
+                remaining_lists[0], depth + 1, remaining_lists[1:], var_dict
+            )
+        if self.filter and self.filter.fetch(extend=var_dict):
+            return {}
+        _key = self.key.fetch(extend=var_dict)  # type: ignore
+        _val = self.val.fetch(extend=var_dict)  # type: ignore
+        return {_key: _val}
+
+    def _validate_variable(self):
+        if self.key is None or self.val is None:
+            raise ValueError("Variable is not set.")
