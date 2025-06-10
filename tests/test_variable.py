@@ -29,6 +29,8 @@ def context_vars():
         ("{{ [1, 2, 3] }}", [1, 2, 3]),
         ("{{ {'key': 'val'} }}", {"key": "val"}),
         ("{{ 'foo' + 'bar' }}", "foobar"),
+        ("{{ 'foo\t' + 'bar' }}", "foo\tbar"),
+        ("{{ 'foo\n' + 'bar' }}", "foo\nbar"),
         ("{{ True or False }}", True),
         ("{{ True and False }}", False),
         ("{{ not True }}", False),

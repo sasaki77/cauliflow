@@ -7,7 +7,7 @@ from lark import Lark, ParseTree, Transformer, Tree, v_args
 from cauliflow.context import ctx_blackboard, ctx_flowdata, ctx_macros
 from cauliflow.filters import FILTERS
 
-_grammar = """
+_grammar = r"""
     start: (text | expression_wrapper)*
     text: /[^{}]+/
     expression_wrapper: "{{" expression "}}"
@@ -80,13 +80,13 @@ _grammar = """
     dict: "{" [pair ("," pair)*] "}"
     pair: string ":" disjunction
 
+    STRING: /([ubf]?r?|r[ubf])("(?!"")[\s\S]*?(?<!\\)(\\\\)*?"|'(?!'')[\s\S]*?(?<!\\)(\\\\)*?')/i
+
     %import common.CNAME -> NAME
     %import common.INT
     %import common.FLOAT
     %import common.NUMBER
     %import common.WS_INLINE
-    %import python.STRING
-
     %ignore WS_INLINE
 """
 
