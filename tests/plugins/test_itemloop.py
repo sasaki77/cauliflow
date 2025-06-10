@@ -22,6 +22,17 @@ from cauliflow.plugins.itemloop import ForDict, ForList
             None,
             ["key1-1", "key2-2"],
         ),
+        (
+            [
+                [
+                    {"first": "hello, ", "second": "world"},
+                    {"first": "foo", "second": "bar"},
+                ]
+            ],
+            "item0.first + item0.second",
+            None,
+            ["hello, world", "foobar"],
+        ),
     ],
 )
 async def test_for_list(init_context_vars, lists, expression, filter, expected):
