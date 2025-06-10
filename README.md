@@ -5,4 +5,3 @@ CauliFlow enables the creation of flexible, reusable workflows by utilising thre
 Although CauliFlow is primarily designed to work with EPICS PVs, it can also be used for other purposes.
 For more details, please refer to [Documentation](https://sasaki77.github.io/cauliflow)
 
-![overview](./docs/_images/overview.drawio.svg)
