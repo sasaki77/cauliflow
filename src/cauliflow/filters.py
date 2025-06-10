@@ -98,7 +98,7 @@ def join(separator: str, target: list[str] | None = None) -> str:
       - Join a list of string with separator.
     parameters:
       separator:
-        description: The name of the dictionary’s keys.
+        description: Separator for the concatenation of the strings.
     example: |-
       # item: "Hello, world"
       item: "{{ ["Hello", "world"] | join(', ') }}"
