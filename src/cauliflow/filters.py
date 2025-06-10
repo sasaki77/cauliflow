@@ -92,6 +92,22 @@ def str_pvts(tstamp: float) -> str:
     )
 
 
+def join(separator: str, target: list[str] | None = None) -> str:
+    """
+    description:
+      - Join a list of string with separator.
+    parameters:
+      separator:
+        description: The name of the dictionary’s keys.
+    example: |-
+      # item: "Hello, world"
+      item: "{{ ["Hello", "world"] | join(', ') }}"
+    """
+    if not isinstance(target, list):
+        raise ValueError
+    return separator.join(target)
+
+
 FILTERS = {
     "str": _str,
     "int": _int,
@@ -101,4 +117,5 @@ FILTERS = {
     "dict_keys": dict_keys,
     "dict_values": dict_values,
     "dict2item": dict2item,
+    "join": join,
 }
