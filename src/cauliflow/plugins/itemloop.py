@@ -60,6 +60,13 @@ class ForList(ProcessNode):
           name: "for_list"
           lists: {"key1": 1, "key2": 2}
           expression: "item0_key + '-' + item0_val | str"
+
+      # Create a list from nested lists of a dict.
+      # Output: {'for_list': ["hello, world", "foobar"]}
+      - for_list:
+          name: "for_list"
+          lists: [[{"first": "hello, ", "second": "world"}, {"first": "foo", "second": "bar"}]]
+          expression:  "item0.first + item0.second"
     """
 
     def __init__(self, name: str, param_dict: dict | None = None):
