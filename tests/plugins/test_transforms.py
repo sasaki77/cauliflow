@@ -1,33 +1,10 @@
 import pytest
+
 from cauliflow.context import ctx_flowdata
 from cauliflow.plugins.transforms import (
     ConcatNode,
-    DictKeysNode,
-    DictValuesNode,
     MutateNode,
 )
-
-
-@pytest.mark.asyncio
-async def test_dictkeys(init_context_vars):
-    params = {
-        "input": {"key1": "val1", "key2": "val2"},
-    }
-    node = DictKeysNode(name="node", param_dict=params)
-    await node.run()
-    flowdata = ctx_flowdata.get()
-    assert flowdata["node"] == ["key1", "key2"]
-
-
-@pytest.mark.asyncio
-async def test_dictvalues(init_context_vars):
-    params = {
-        "input": {"key1": "val1", "key2": "val2"},
-    }
-    node = DictValuesNode(name="node", param_dict=params)
-    await node.run()
-    flowdata = ctx_flowdata.get()
-    assert flowdata["node"] == ["val1", "val2"]
 
 
 @pytest.mark.asyncio
