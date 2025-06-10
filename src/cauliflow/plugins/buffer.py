@@ -1,6 +1,7 @@
 import asyncio
 
 from cauliflow.context import ctx_flowdata
+from cauliflow.flowdata import FlowData
 from cauliflow.node import ArgSpec, FlowControlNode, node
 
 
@@ -87,8 +88,9 @@ class BufferNode(FlowControlNode):
 
     async def flush(self):
         if self.buffer:
-            d = ctx_flowdata.get()
-            d[self.name] = self.buffer
+            # buffer node resets the flowdata with buffer data
+            flowdata = {self.name: self.buffer}
+            ctx_flowdata.set(FlowData(flowdata))
             self.buffer = []
 
             if self.timer_task:
