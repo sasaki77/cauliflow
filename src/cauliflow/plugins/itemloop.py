@@ -18,6 +18,7 @@ class ForList(ProcessNode):
         lists:
           description:
             - List of list or dict to make a nested loop.
+            - Single list or dict can be passed.
         expression:
           description:
             - Expression of a item for a created list.
@@ -38,12 +39,27 @@ class ForList(ProcessNode):
           expression: "item0*item1"
           filter: "item0*item1>7"
 
-      # Create a list from list of list and dict
+      # Create a list from list of list and dict.
       # Output: {'for_list': ['head1:val1', 'head1:val2', 'head2:val1', 'head2:val2']}
       - for_list:
           name: "for_list"
           lists: [["head1", "head2"], {"name1": "val1", "name2": "val2"}]
           expression: "item0 + ':' + item1_val"
+
+      # Create a list from a single list.
+      # Output: {'for_list': [2, 4, 6]}
+      - for_list:
+          name: "for_list"
+          lists: [1, 2, 3, 4]
+          expression: "item0*2"
+          filter: "item0*2>7"
+
+      # Create a list from a dict.
+      # Output: {'for_list': ["key1-1", "key2-2"]}
+      - for_list:
+          name: "for_list"
+          lists: {"key1": 1, "key2": 2}
+          expression: "item0_key + '-' + item0_val | str"
     """
 
     def __init__(self, name: str, param_dict: dict | None = None):
@@ -66,8 +82,23 @@ class ForList(ProcessNode):
             self.filter = Variable("{{" + self.params["filter"] + "}}")
 
         lists = self.params["lists"]
-        var_dict = {}
-        items = self._for_loop(lists[0], 0, lists[1:], var_dict)
+        is_dict = isinstance(lists, dict)
+
+        if is_dict:
+            items = self._for_loop(lists, 0, [], {})
+            self.output(items)
+            return
+
+        if not isinstance(lists, list):
+            raise ValueError
+
+        if len(lists) < 1:
+            return
+
+        has_list_or_dict = isinstance(lists[0], (list, dict))
+        loop_lists = lists if has_list_or_dict else [lists]
+
+        items = self._for_loop(loop_lists[0], 0, loop_lists[1:], {})
         self.output(items)
 
     @singledispatchmethod
@@ -129,6 +160,7 @@ class ForDict(ProcessNode):
         lists:
           description:
             - List of list or dict to make a nested loop.
+            - Single list or dict can be passed.
         key:
           description:
             - Expression of a item of key for a created dict.
@@ -145,13 +177,30 @@ class ForDict(ProcessNode):
             - Condition not to add item for a crated dict.
             - Loop item can be refereed as same as in expression.
     EXAMPLE: |-
-      # Create a dict from list of list and dict
+      # Create a dict from list of list and dict.
       # Output: {'for_dict': {'head1:name1': 'val1', 'head1:name2': 'val2', 'head2:name1': 'val1', 'head2:name2': 'val2'}}
       - for_dict:
           name: "for_dict"
           lists: [["head1", "head2"], {"name1": "val1", "name2": "val2"}]
           key: "item0 + ':' + item1_key"
           val: "item1_val"
+
+      # Create a dict from a single list.
+      # Output: {'for_dict': {"key1": 2, "key2": 4, "key3": 6}}
+      - for_dict:
+          name: "for_dict"
+          lists: [1, 2, 3, 4]
+          key: "'key' + item0 |str"
+          val: "item0*2"
+          filter: "item0*2>7"
+
+      # Create a dict from a dict.
+      # Output: {'for_dict': {"key1-1": 1, "key2-2": 2}}
+      - for_dict:
+          name: "for_dict"
+          lists: {"key1": 1, "key2": 2}
+          key: "item0_key + '-' + item0_val | str"
+          val: "item0_val"
     """
 
     def __init__(self, name: str, param_dict: dict | None = None):
@@ -178,8 +227,23 @@ class ForDict(ProcessNode):
             self.filter = Variable("{{" + self.params["filter"] + "}}")
 
         lists = self.params["lists"]
-        var_dict = {}
-        items = self._for_loop(lists[0], 0, lists[1:], var_dict)
+        is_dict = isinstance(lists, dict)
+
+        if is_dict:
+            items = self._for_loop(lists, 0, [], {})
+            self.output(items)
+            return
+
+        if not isinstance(lists, list):
+            raise ValueError
+
+        if len(lists) < 1:
+            return
+
+        has_list_or_dict = isinstance(lists[0], (list, dict))
+        loop_lists = lists if has_list_or_dict else [lists]
+
+        items = self._for_loop(loop_lists[0], 0, loop_lists[1:], {})
         self.output(items)
 
     @singledispatchmethod
