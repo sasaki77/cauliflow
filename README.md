@@ -74,7 +74,7 @@ The `init` flow runs first and sets the value of the `increment` key in the blac
 After that, the `main` flow is executed at regular intervals, controlled by an `interval` node. Each time it runs, the `add` node increments the value of `increment` key in the blackboard and updates the value. Next, the `out_msg` node creates a message string and writes it to the flowdata. This string is then passed and printed to the standard output by the `out` node.
 
 The `interval` parameter of the `interval` node is configured using a macro.
-Since the macro value is passed as a string, the [filter](../overview/file.md#filters) is used to convert it to a float.
+Since the macro value is passed as a string, the filter is used to convert it to a float.
 
 To run the flows, use the cauliflow run command.
 the incremented value is showed every second.
