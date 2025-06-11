@@ -24,6 +24,7 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
+   installation
    introduction
    overview/index
    tutorials/index
