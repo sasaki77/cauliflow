@@ -34,7 +34,6 @@ class OutFileNode(ProcessNode):
     """
 
     def set_argument_spec(self) -> dict[str, ArgSpec]:
-        self.set_common_output_args()
         return {
             "path": ArgSpec(type="path", required=True),
             "src": ArgSpec(type="str", required=True),
