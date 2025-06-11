@@ -2,6 +2,7 @@ import asyncio
 from logging import DEBUG, WARNING, getLogger
 
 import click
+
 from cauliflow.context import ContextFlows, ctx_flows, ctx_macros
 from cauliflow.loader import flow_from_yaml
 from cauliflow.logging import get_logger
@@ -17,6 +18,7 @@ def init_logger(debug: bool = False) -> None:
 
 
 @click.group()
+@click.version_option(package_name="cauliflow", message="%(prog)s %(version)s")
 def cli():
     pass
 
