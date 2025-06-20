@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, timedelta
+from time import monotonic
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -36,18 +36,15 @@ class IntervalNode(TriggerNode):
 
     async def process(self) -> None:
         interval = self.params["interval"]
-        last_time = datetime.now()
+        next_time = monotonic()
 
         while True:
             init_flowdata()
             if self.child is not None:
                 await self.child.run()
-            future_time = last_time + timedelta(seconds=interval)
-            time_difference = (future_time - last_time).seconds
-            if time_difference < 0:
-                continue
-            last_time = datetime.now()
-            await asyncio.sleep(time_difference)
+            next_time += interval
+            sleep_duration = max(0, next_time - monotonic())
+            await asyncio.sleep(sleep_duration)
 
 
 @node.register("scheduler")
