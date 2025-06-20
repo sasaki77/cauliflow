@@ -19,6 +19,7 @@ dependencies = [
     "aioca>=1.8.1",
     "aiofiles>=24.1.0",
     "aiohttp[speedups]>=3.11.18",
+    "apscheduler>=3.11.0",
     "click>=8.1.8",
     "janus>=2.0.0",
     "lark>=1.2.2",
