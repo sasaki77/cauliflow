@@ -1,5 +1,6 @@
 import pytest
-from cauliflow.context import ctx_flowdata
+
+from cauliflow.context import ctx_blackboard, ctx_flowdata
 from cauliflow.flow import Flow
 
 
@@ -49,3 +50,57 @@ async def test_if_child_else(init_plugins):
     assert "add3" not in flowdata
     assert flowdata["add4"] == 4
     assert flowdata["add5"] == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "mode",
+    [
+        ("sequential"),
+        ("concurrent"),
+    ],
+)
+async def test_foreach(init_plugins, mode):
+    flow = Flow("test")
+
+    args_for = {"items": [1, 2, 3], "item_name": "foo", "mode": mode}
+    args_msg = {
+        "msg": "{{ fd.foo }}",
+        "out_bb": True,
+        "out_field": "{{ 'field' + fd.foo | str }}",
+    }
+
+    flow.create_node("foreach", "root", "for", args_for)
+    flow.create_node("message", "for.child_for", "msg", args_msg)
+
+    await flow.run()
+
+    bb = ctx_blackboard.get()
+    assert bb == {"field1": 1, "field2": 2, "field3": 3}
+    fd = ctx_flowdata.get()
+    assert fd == {}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "items, mode",
+    [
+        ([1, 2, 3], "invalid_mode"),
+        (1, "concurrent"),
+    ],
+)
+async def test_foreach_valueerror(init_plugins, items, mode):
+    flow = Flow("test")
+
+    args_for = {"items": items, "item_name": "foo", "mode": mode}
+    args_msg = {
+        "msg": "{{ fd.foo }}",
+        "out_bb": True,
+        "out_field": "{{ 'field' + fd.foo | str }}",
+    }
+
+    flow.create_node("foreach", "root", "for", args_for)
+    flow.create_node("message", "for.child_for", "msg", args_msg)
+
+    with pytest.raises(ValueError):
+        await flow.run()
