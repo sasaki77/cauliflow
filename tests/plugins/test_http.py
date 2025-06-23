@@ -105,7 +105,6 @@ async def test_post_data(init_context_vars, mock_aioresponse, format, expected):
     await node.run()
     flowdata = ctx_flowdata.get()
     data = flowdata["node"]
-    print(data)
     assert data["status"] == 201
     assert data["data"] == expected
 
@@ -137,7 +136,6 @@ async def test_patch_data(init_context_vars, mock_aioresponse, format, expected)
     await node.run()
     flowdata = ctx_flowdata.get()
     data = flowdata["node"]
-    print(data)
     assert data["status"] == 201
     assert data["data"] == expected
 
