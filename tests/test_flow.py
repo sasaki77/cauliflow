@@ -1,4 +1,5 @@
 import pytest
+
 from cauliflow.context import ctx_blackboard, ctx_flowdata
 from cauliflow.flow import ConcurrentFlows, Flow, SequentialFlows
 
@@ -97,3 +98,18 @@ async def test_composite_flows(init_plugins):
     blackboard = ctx_blackboard.get()
     assert blackboard["add2"] == 3
     assert blackboard["add4"] == 3
+
+
+@pytest.mark.asyncio
+async def test_flow_name_collision(init_plugins):
+    flow = Flow("test")
+
+    args1 = {"a": 1, "b": 1}
+    args2 = {"a": "{{ fd['add1'] }}", "b": 1}
+    args3 = {"a": "{{ fd['add2'] }}", "b": 1}
+
+    flow.create_node("test.addnode", "root", "add1", args1)
+    flow.create_node("test.addnode", "add1", "add2", args2)
+
+    with pytest.raises(KeyError):
+        flow.create_node("test.addnode", "add2", "add1", args3)
