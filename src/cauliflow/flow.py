@@ -33,8 +33,9 @@ class Flow:
         self, _plugin_name: str, _parent: str, name: str, param_dict: dict
     ) -> None:
         if name in self.nodes:
-            _logger.warning(f"{name} is already registerd")
-            return
+            raise KeyError(
+                f"The node name is in conflict: {name}. Please change the node name."
+            )
 
         self.nodes[name] = node.create(_plugin_name, name=name, param_dict=param_dict)
 
