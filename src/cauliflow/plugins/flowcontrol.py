@@ -4,6 +4,7 @@ from enum import StrEnum
 from typing import TypedDict
 
 from cauliflow.context import ctx_flowdata, init_flowdata
+from cauliflow.flowdata import FlowData
 from cauliflow.logging import get_logger
 from cauliflow.node import ArgSpec, FlowControlNode, Node, node
 from cauliflow.variable import Variable
@@ -223,3 +224,120 @@ class ForEachNode(FlowControlNode):
                 fd.update(base_fd)
                 fd[item_name] = item
                 tg.create_task(child.run())
+
+
+@node.register("dispatch")
+class DispatchNode(FlowControlNode):
+    """
+    DOCUMENTATION:
+      short_description: Dispatch the flowdata to the target nodes.
+      description:
+        - Dispatch the flowdata to the flows of target nodes.
+        - The target nodes can be called either sequentially or concurrently.
+        - The flowdata is shared in sequential mode.
+        - The flowdata is finally merged and passed to the child node in concurrent mode.
+        - When the flows of the target nodes are finished, then run children of dispatch node.
+      parameters:
+        mode:
+          description:
+            - Set either of sequential or concurrent.
+        targets:
+          description:
+            - Target nodes to dispatch the flowdata.
+    EXAMPLE: |-
+      # Dispatch the flowdata sequentially
+      # Output: {'msg': 10, 'target1': 11, 'target2': 21, 'target3': 31}
+      - message:
+          name: "msg"
+          msg: 10
+      - dispatch:
+          name: "dispatch"
+          mode: "sequential"
+      - message:
+          name: "target1"
+          msg: "{{ fd.msg + 1 }}"
+          parent: "dispatch.targets"
+      - message:
+          name: "target2"
+          msg: "{{ fd.msg + fd.target1 }}"
+          parent: "dispatch.targets"
+      - message:
+          name: "target3"
+          msg: "{{ fd.msg + fd.target2 }}"
+          parent: "dispatch.targets"
+
+      # Dispatch the flowdata concurrently
+      # Output: {'msg': 10, 'target1': 11, 'target2': 12, 'target3': 13}
+      - message:
+          name: "msg"
+          msg: 10
+      - dispatch:
+          name: "dispatch"
+          mode: "concurrent"
+      - message:
+          name: "target1"
+          msg: "{{ fd.msg + 1 }}"
+          parent: "dispatch.targets"
+      - message:
+          name: "target2"
+          msg: "{{ fd.msg + 2 }}"
+          parent: "dispatch.targets"
+      - message:
+          name: "target3"
+          msg: "{{ fd.msg + 3 }}"
+          parent: "dispatch.targets"
+    """
+
+    def __init__(self, name: str, param_dict: dict | None = None):
+        super().__init__(name, param_dict)
+        self.targets: list[Node] = []
+
+    def set_argument_spec(self) -> dict[str, ArgSpec]:
+        return {
+            "mode": ArgSpec(type="str", required=False, default=ForEachMode.CONCURRENT),
+            "targets": ArgSpec(type="list(node)", required=False, default=None),
+        }
+
+    async def process(self) -> None:
+        if len(self.targets) < 1:
+            _logger.warning("dispatch is called, but it has no target.")
+            return
+
+        mode = self.params["mode"]
+
+        if mode == ForEachMode.SEQUENTIAL:
+            await self._sequential(self.targets)
+        elif mode == ForEachMode.CONCURRENT:
+            base_fd = ctx_flowdata.get()
+            fd = await self._concurrent(base_fd, self.targets)
+            ctx_flowdata.set(fd)
+        else:
+            raise ValueError(f"{mode} is not valid mode")
+
+    def add_child(self, child: Node, param: str | None = None) -> None:
+        if param is None:
+            self.child = child
+            return
+
+        if param != "targets":
+            _logger.warning(f"{param} is invalid field")
+
+        self.targets.append(child)
+
+    async def _sequential(self, targets: list[Node]) -> None:
+        for target in targets:
+            await target.run()
+
+    async def _concurrent(self, base_fd, targets: list[Node]) -> FlowData:
+        fds = []
+        async with asyncio.TaskGroup() as tg:
+            for target in targets:
+                init_flowdata()
+                fd = ctx_flowdata.get()
+                fds.append(fd)
+                fd.update(base_fd)
+                tg.create_task(target.run())
+        ret = {}
+        for fd in fds:
+            ret.update(fd)
+        return FlowData(ret)
