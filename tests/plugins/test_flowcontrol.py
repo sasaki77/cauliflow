@@ -104,3 +104,49 @@ async def test_foreach_valueerror(init_plugins, items, mode):
 
     with pytest.raises(ValueError):
         await flow.run()
+
+
+@pytest.mark.asyncio
+async def test_dispatch_sequential(init_plugins):
+    flow = Flow("test")
+
+    args_msg = {"msg": 10}
+    args_dispatch = {"mode": "sequential"}
+    args1 = {"a": "{{ fd.msg }}", "b": 1}
+    args2 = {"a": "{{ fd.msg }}", "b": "{{ fd.add1 }}"}
+    args3 = {"a": "{{ fd.msg }}", "b": "{{ fd.add2 }}"}
+
+    flow.create_node("message", "root", "msg", args_msg)
+    flow.create_node("dispatch", "msg", "dispatch", args_dispatch)
+    flow.create_node("test.addnode", "dispatch.targets", "add1", args1)
+    flow.create_node("test.addnode", "dispatch.targets", "add2", args2)
+    flow.create_node("test.addnode", "dispatch.targets", "add3", args3)
+
+    await flow.run()
+    flowdata = ctx_flowdata.get()
+    assert flowdata["add1"] == 11
+    assert flowdata["add2"] == 21
+    assert flowdata["add3"] == 31
+
+
+@pytest.mark.asyncio
+async def test_dispatch_concurrent(init_plugins):
+    flow = Flow("test")
+
+    args_msg = {"msg": 10}
+    args_dispatch = {"mode": "concurrent"}
+    args1 = {"a": "{{ fd.msg }}", "b": 1}
+    args2 = {"a": "{{ fd.msg }}", "b": 2}
+    args3 = {"a": "{{ fd.msg }}", "b": 3}
+
+    flow.create_node("message", "root", "msg", args_msg)
+    flow.create_node("dispatch", "msg", "dispatch", args_dispatch)
+    flow.create_node("test.addnode", "dispatch.targets", "add1", args1)
+    flow.create_node("test.addnode", "dispatch.targets", "add2", args2)
+    flow.create_node("test.addnode", "dispatch.targets", "add3", args3)
+
+    await flow.run()
+    flowdata = ctx_flowdata.get()
+    assert flowdata["add1"] == 11
+    assert flowdata["add2"] == 12
+    assert flowdata["add3"] == 13
