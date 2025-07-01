@@ -27,6 +27,16 @@ COMMON_ARGUMENT_SPEC: dict[str, ArgSpec] = {
     "out_field": ArgSpec(type="str", required=False, default=None),
 }
 
+COMMON_ARGUMENT_DOC = """
+out_bb:
+  description:
+    - If this parameter is set to True, the data is stored in the blackboard rather than in the flowdata.
+    - By default, the key in the blackboard is set to the node name. To customize the key, specify the out_field parameter.
+out_field:
+  description:
+    - The key for the data in the blackboard. If out_bb is set to False, this parameter is ignored.
+"""
+
 
 class Node(ABC):
     DOCUMENTATION = None
