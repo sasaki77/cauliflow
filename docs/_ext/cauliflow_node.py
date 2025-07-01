@@ -2,7 +2,7 @@ from docutils import nodes
 from sphinx.util.docutils import SphinxDirective
 from yaml import safe_load
 
-from cauliflow.node import ArgSpec, NodeFactory
+from cauliflow.node import COMMON_ARGUMENT_DOC, ArgSpec, NodeFactory
 from cauliflow.plugin_manager import PluginManager
 
 
@@ -18,10 +18,15 @@ class CauliFlowNodeDirective(SphinxDirective):
         if node.__doc__ is not None:
             doc_src = safe_load(node.__doc__)
 
-        doc_data = doc_src.get("DOCUMENTATION", None) if doc_src else None
         parameters = {}
+
+        common_arg_doc = safe_load(COMMON_ARGUMENT_DOC)
+        parameters.update(common_arg_doc)
+
+        doc_data = doc_src.get("DOCUMENTATION", None) if doc_src else None
         if doc_data:
-            parameters = doc_data["parameters"] if "parameters" in doc_data else {}
+            own_arg_doc = doc_data["parameters"] if "parameters" in doc_data else {}
+            parameters.update(own_arg_doc)
 
         example = doc_src.get("EXAMPLE", None) if doc_src else None
 
