@@ -23,6 +23,7 @@ release = "0.1.0"
 extensions = [
     "myst_parser",
     "sphinxcontrib.mermaid",
+    "sphinx_multiversion",
     "cauliflow_node",
     "cauliflow_filters",
 ]
@@ -56,3 +57,7 @@ html_static_path = ["_static"]
 html_css_files = [
     "css/custom.css",
 ]
+
+# sphinx-multiversion settings
+smv_tag_whitelist = r"^\d+\.\d+.*$"
+smv_branch_whitelist = "master"
