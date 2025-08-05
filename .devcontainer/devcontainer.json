@@ -3,5 +3,5 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "devcontainer",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	"postCreateCommand": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}/.venv"
+	"postCreateCommand": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}/.venv && sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}/.tox"
 }

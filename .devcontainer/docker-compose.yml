@@ -7,6 +7,7 @@ services:
     volumes:
       - ../:/workspaces/cauliflow:cached
       - venv:/workspaces/cauliflow/.venv
+      - tox:/workspaces/cauliflow/.tox
     command: sleep infinity
 
   ioc:
@@ -16,3 +17,4 @@ services:
 
 volumes:
   venv:
+  tox:
