@@ -474,21 +474,24 @@ wheels = [
 
 [[package]]
 name = "epicscorelibs"
-version = "7.0.7.99.1.1"
+version = "7.0.7.99.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
     { name = "setuptools" },
     { name = "setuptools-dso" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4a/18/3853de30cc92c164eccff6e62599ef88d0aa3b64740973b63e13f88145de/epicscorelibs-7.0.7.99.1.1.tar.gz", hash = "sha256:f9dd2c01913cf13959e882c7c2afccd5d55cd5084bd4597201ea119f65752231", size = 1589906, upload-time = "2024-09-30T13:25:03.289Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/80/07/d820b96a0e8d6b99742f984788d7679d5a60000f99c2ee10094ddc4baf53/epicscorelibs-7.0.7.99.1.2.tar.gz", hash = "sha256:2a74a53b438bbbbeef13c74640a4d3060d35de78ce8989f3158148f38534cd43", size = 1630005, upload-time = "2025-07-31T08:11:59.809Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/64/69/db29f8a2c91608d4d8d4c553d2f9a1cf836ad8ba4bcd3eaa2e84b5a2f1dd/epicscorelibs-7.0.7.99.1.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:390e0912d47e354748da858fae348079c854bea02202b6aa5c63b7487de54dbc", size = 7769298, upload-time = "2024-09-30T13:25:27.837Z" },
-    { url = "https://files.pythonhosted.org/packages/89/05/defd9300c637d4d15797a90345a178672dcb44d8f02fb1985685454f3807/epicscorelibs-7.0.7.99.1.1-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:6343b2e76bd95eb3a7a2bf493cbf21620657aeb30bec9d775887e13552238bf5", size = 5376275, upload-time = "2024-09-30T13:23:20.544Z" },
-    { url = "https://files.pythonhosted.org/packages/24/82/7b6256bec65db91e06c3a8d5f83a5d63459e9e89353a75142fb8df2a1296/epicscorelibs-7.0.7.99.1.1-cp311-cp311-win_amd64.whl", hash = "sha256:b6ec9691a9879764f5a33591982c15449ba1eabd1755dd36be3e7096ce80aa03", size = 2491799, upload-time = "2024-09-30T13:29:07.118Z" },
-    { url = "https://files.pythonhosted.org/packages/72/48/650f76f3f5361f2f0c42b342ae00b75e67b8c9c24ea5796cabce47d2b7d3/epicscorelibs-7.0.7.99.1.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:dd89c5e0d7dd72cb6429f7d192be42d85e00e483c8ef192ad30e39cd195713b9", size = 7769231, upload-time = "2024-09-30T13:30:09.648Z" },
-    { url = "https://files.pythonhosted.org/packages/a7/a5/70302709136950f4be2c4687052ccdfbb10b53ad3ddf4c71b06acaef6e51/epicscorelibs-7.0.7.99.1.1-cp312-cp312-manylinux2014_x86_64.whl", hash = "sha256:a43debd51cd92d5bf6333388d500f7ea57bf9468a9345b858fdd49ba150a8e07", size = 5377976, upload-time = "2024-09-30T13:23:15.155Z" },
-    { url = "https://files.pythonhosted.org/packages/03/ea/36777049e0fb2b90ae2c67d9fc973af2efb59930192c7d32df08988df3d8/epicscorelibs-7.0.7.99.1.1-cp312-cp312-win_amd64.whl", hash = "sha256:e1d27bbe5aee93d12e86bd72f0674cc999b43237720d61ac3cc4c905429a6004", size = 2491828, upload-time = "2024-09-30T13:28:24.789Z" },
+    { url = "https://files.pythonhosted.org/packages/6c/11/c4193a11b52bc1005a088f0568c26f2edea741584110455c4e3b0d927eaa/epicscorelibs-7.0.7.99.1.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:001ed9413ec5980ef8a93c86090053a9fc80240a3e08c866cb0b0633a19755eb", size = 7769428, upload-time = "2025-07-31T08:14:26.252Z" },
+    { url = "https://files.pythonhosted.org/packages/9f/81/dc563b5cf6ac95b7ee30124c95d9e7e10811aa87d89b456652b8d0da5edd/epicscorelibs-7.0.7.99.1.2-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:21d22501896781438cf183b09da730b39f4645e9b6b522c12dc409660ad550e7", size = 5376600, upload-time = "2025-07-31T08:12:30.252Z" },
+    { url = "https://files.pythonhosted.org/packages/d1/0b/7313327f26ef2683fe9e7e8e0557babb80693250de0f400d2749b736681f/epicscorelibs-7.0.7.99.1.2-cp311-cp311-win_amd64.whl", hash = "sha256:f24a3719c95172753d43053f0b229038f831e64dfdb8583cc4fb0317cb59049e", size = 2502640, upload-time = "2025-07-31T08:16:19.348Z" },
+    { url = "https://files.pythonhosted.org/packages/07/eb/44475b09aef9ffc31d3b6f5028fa3cbffd1144a3a87c3a87349a2991e6d1/epicscorelibs-7.0.7.99.1.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:f44f67edd96a0da13d99e9fc798c8b49c4441475cc732257a00c17923e6c5b74", size = 7768865, upload-time = "2025-07-31T08:14:18.201Z" },
+    { url = "https://files.pythonhosted.org/packages/50/54/5357954339fb1d722771dfc11a2ece67ffe8aeb8ec976be841bfe42752fa/epicscorelibs-7.0.7.99.1.2-cp312-cp312-manylinux2014_x86_64.whl", hash = "sha256:0fe1960c2db0d6480bb0389616d2803aeca6a5836d12b1857d6c4c063f7cf709", size = 5378307, upload-time = "2025-07-31T08:12:36.774Z" },
+    { url = "https://files.pythonhosted.org/packages/cb/63/4787c4a86ba45fdfdb9905da647a9b537ae80be7e7be0084a17871212ee9/epicscorelibs-7.0.7.99.1.2-cp312-cp312-win_amd64.whl", hash = "sha256:6949d1596362deec124fbbd09a86ee3b21caeb3ac75a7e80d59addec07bb6942", size = 2502786, upload-time = "2025-07-31T08:18:21.809Z" },
+    { url = "https://files.pythonhosted.org/packages/c2/67/2b7f4e76a102a66e48a25b3278df09b7547eed5df1cef73e9396ec49df3b/epicscorelibs-7.0.7.99.1.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:4106d707c5c6a1c35155adbea03275b64fa4c77adba1e820cc8f1dbe3faf62c3", size = 7769136, upload-time = "2025-07-31T08:19:01.16Z" },
+    { url = "https://files.pythonhosted.org/packages/a2/af/6bb0e1de4fb7218fa4ba95fe91ba1fd4a5661dd28a461eff6a0f609c996c/epicscorelibs-7.0.7.99.1.2-cp313-cp313-manylinux2014_x86_64.whl", hash = "sha256:be8f328fe16b13fa9ca1dabf85c53561a3209b3c5df693c6b959351f6d11fabc", size = 5378303, upload-time = "2025-07-31T08:12:39.169Z" },
+    { url = "https://files.pythonhosted.org/packages/46/72/fef75e967d5663359739ef23310cfc37e84149bc4190aa8f95482feaa99e/epicscorelibs-7.0.7.99.1.2-cp313-cp313-win_amd64.whl", hash = "sha256:0cd102e3f2292d10441b675e8cf7c2fcbaf4e4b0474b9d3813ed3cdeea7a1508", size = 2502677, upload-time = "2025-07-31T08:18:33.207Z" },
 ]
 
 [[package]]
